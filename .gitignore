@@ -19,3 +19,7 @@ local.properties
 libs/
 obj/
 
+# Crossbuild archives and builds
+crossbuild/build/
+crossbuild/ndk-*/
+
