@@ -91,3 +91,17 @@ if [[ $? == 0 ]] ; then
 echo "Finished building requisites."
 fi
 
+# Build native libraries
+$ANDROID_NDK_ROOT/ndk-build -B
+
+# Update application if build.xml is not present
+if [ ! -e build.xml ] ; then
+	android update project -p  .
+fi
+
+# Build the project in debug mode and install on the connected device
+ant debug install
+
+# Run the application on the emulator
+adb shell am start -a android.intent.action.MAIN -n org.libdivecomputer/.Main
+
