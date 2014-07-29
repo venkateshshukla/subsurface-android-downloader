@@ -1,0 +1,26 @@
+Dive Downloader Application for Android as a Proof of Concept
+==============================================================
+
+Using libdivecomputer, this application is targeted to download dive related
+informations from various divecomputers and give back an XML file containing all
+related information.
+
+Things Planned
+===============
+
+1. A framework for cross compilation of libdivecomputer and other requisite
+library for use on android.
+2. JNI Wrappers to use these library functions on android.
+3. Android UI for selecting divecomputers, extraction of data and displaying the
+list of xml files.
+
+Android UI
+==========
+
+The android UI should minimally contain the following things.
+1. A list of currently supported divecomputers.
+2. A list of attached USB devices for selection.
+3. Progress of dive download on selection of divecomputer.
+4. List of xml files generated and stored on SD after import from divecomputers.
+5. Manipulation of these files such as viewing, renaming, sharing, deleting etc.
+
