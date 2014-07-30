@@ -43,6 +43,72 @@ fi
 # Prepare for building
 mkdir -vp build
 
+pushd build
+
+if [ ! -e sqlite-autoconf-3080200.tar.gz ] ; then
+	wget http://www.sqlite.org/2013/sqlite-autoconf-3080200.tar.gz
+fi
+if [ ! -e sqlite-autoconf-3080200 ] ; then
+	tar -zxf sqlite-autoconf-3080200.tar.gz
+fi
+if [ ! -e $PKG_CONFIG_PATH/sqlite3.pc ] ; then
+	mkdir -p sqlite-build-$ARCH
+	pushd sqlite-build-$ARCH
+	../sqlite-autoconf-3080200/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --enable-static --disable-shared
+	make -j8
+	make install
+	popd
+fi
+
+if [ ! -e libxml2-2.9.1.tar.gz ] ; then
+	wget ftp://xmlsoft.org/libxml2/libxml2-2.9.1.tar.gz
+fi
+if [ ! -e libxml2-2.9.1 ] ; then
+	tar -zxf libxml2-2.9.1.tar.gz
+fi
+if [ ! -e $PKG_CONFIG_PATH/libxml-2.0.pc ] ; then
+	mkdir -p libxml2-build-$ARCH
+	pushd libxml2-build-$ARCH
+	../libxml2-2.9.1/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --without-python --without-iconv --enable-static --disable-shared
+	perl -pi -e 's/runtest\$\(EXEEXT\)//' Makefile
+	perl -pi -e 's/testrecurse\$\(EXEEXT\)//' Makefile
+	make -j8
+	make install
+	popd
+fi
+
+if [ ! -e libxslt-1.1.28.tar.gz ] ; then
+	wget ftp://xmlsoft.org/libxml2/libxslt-1.1.28.tar.gz
+fi
+if [ ! -e libxslt-1.1.28 ] ; then
+	tar -zxf libxslt-1.1.28.tar.gz
+	cp libxml2-2.9.1/config.sub libxslt-1.1.28
+fi
+if [ ! -e $PKG_CONFIG_PATH/libxslt.pc ] ; then
+	mkdir -p libxslt-build-$ARCH
+	pushd libxslt-build-$ARCH
+	../libxslt-1.1.28/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --with-libxml-prefix=${PREFIX} --without-python --without-crypto --enable-static --disable-shared
+	make
+	make install
+	popd
+fi
+
+if [ ! -e libzip-0.11.2.tar.gz ] ; then
+	wget http://www.nih.at/libzip/libzip-0.11.2.tar.gz
+fi
+if [ ! -e libzip-0.11.2 ] ; then
+	tar -zxf libzip-0.11.2.tar.gz
+fi
+if [ ! -e $PKG_CONFIG_PATH/libzip.pc ] ; then
+	mkdir -p libzip-build-$ARCH
+	pushd libzip-build-$ARCH
+	../libzip-0.11.2/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --enable-static --disable-shared
+	make
+	make install
+	popd
+fi
+popd
+
 # Build libusb
 if [ ! -e libusb/configure ] ; then
 	pushd libusb
