@@ -107,6 +107,23 @@ if [ ! -e $PKG_CONFIG_PATH/libzip.pc ] ; then
 	make install
 	popd
 fi
+
+if [ ! -e libgit2-0.20.0.tar.gz ] ; then
+	wget -O libgit2-0.20.0.tar.gz https://github.com/libgit2/libgit2/archive/v0.20.0.tar.gz
+fi
+if [ ! -e libgit2-0.20.0 ] ; then
+	tar -zxf libgit2-0.20.0.tar.gz
+fi
+if [ ! -e $PKG_CONFIG_PATH/libgit2.pc ] ; then
+	mkdir -p libgit2-build-$ARCH
+	pushd libgit2-build-$ARCH
+	# -DCMAKE_CXX_COMPILER=arm-linux-androideabi-g++
+	cmake -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=Android -DCMAKE_C_COMPILER=${CC} -DCMAKE_FIND_ROOT_PATH=${PREFIX} -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY -DANDROID=ON -DSHA1_TYPE=builtin -DBUILD_CLAR=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=${PREFIX} ../libgit2-0.20.0/
+	make
+	make install
+	popd
+fi
+
 popd
 
 # Build libusb
