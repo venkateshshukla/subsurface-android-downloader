@@ -24,8 +24,13 @@ void subsurface_user_info(struct user_info *user)
 	const char *username = getenv("USER");
 
 	if (pwd) {
+#ifndef __ANDROID__
 		if (pwd->pw_gecos && *pwd->pw_gecos)
 			user->name = pwd->pw_gecos;
+#else
+		if (pwd->pw_name && *pwd->pw_name)
+			user->name = pwd->pw_name;
+#endif
 		if (!username)
 			username = pwd->pw_name;
 	}
