@@ -124,6 +124,21 @@ if [ ! -e $PKG_CONFIG_PATH/libgit2.pc ] ; then
 	popd
 fi
 
+if [ ! -e libexif-0.6.21.tar.bz2 ] ; then
+	wget http://kaz.dl.sourceforge.net/project/libexif/libexif/0.6.21/libexif-0.6.21.tar.bz2
+fi
+if [ ! -e libexif-0.6.21 ] ; then
+	tar -xvf libexif-0.6.21.tar.bz2
+fi
+if [ ! -e $PKG_CONFIG_PATH/libexif.pc ] ; then
+	mkdir -p libexif-build-$ARCH
+	pushd libexif-build-$ARCH
+	../libexif-0.6.21/configure  --host=i686-unknown-linux-gnu --prefix=${PREFIX} --enable-static --disable-shared
+	make
+	make install
+	popd
+fi
+
 popd
 
 # Build libusb
