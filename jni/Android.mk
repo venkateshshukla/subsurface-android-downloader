@@ -64,6 +64,7 @@ LOCAL_SRC_FILES += libdivecomputer.c load-git.c membuffer.c parse-xml.c help.c
 LOCAL_SRC_FILES += planner.c profile.c worldmap-save.c save-git.c save-xml.c
 LOCAL_SRC_FILES += save-html.c sha1.c statistics.c strtod.c getline.c gettext.c
 LOCAL_SRC_FILES += subsurfacestartup.c time.c uemis.c uemis-downloader.c linux.c
+LOCAL_SRC_FILES += divecomputer.c
 LOCAL_C_INCLUDES := $(INCLUDE_PATH)
 LOCAL_C_INCLUDES += $(INCLUDE_PATH)/libxml2
 LOCAL_C_INCLUDES += $(INCLUDE_PATH)/../lib/libzip/include
