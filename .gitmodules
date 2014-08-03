@@ -7,3 +7,6 @@
 [submodule "crossbuild/libftdi"]
 	path = crossbuild/libftdi
 	url = https://github.com/venkateshshukla/libftdi.git
+[submodule "crossbuild/subsurface"]
+	path = crossbuild/subsurface
+	url = https://github.com/venkateshshukla/subsurface.git

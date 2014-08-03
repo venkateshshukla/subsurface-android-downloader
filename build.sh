@@ -35,7 +35,8 @@ export CXX=${BUILDCHAIN}-g++
 export AR=${BUILDCHAIN}-ar
 
 # Download libdivecomputer, libusb and libftdi submodule
-if [ ! -e libdivecomputer/configure.ac ] || [ ! -e libusb/configure.ac ] || [ ! -e libftdi/CMakeLists.txt ] ; then
+if [ ! -e libdivecomputer/configure.ac ] || [ ! -e libusb/configure.ac ] \
+	|| [ ! -e libftdi/CMakeLists.txt ] || [ ! -e subsurface/subsurface.pro ] ; then
 	git submodule init
 	git submodule update
 fi
@@ -196,6 +197,12 @@ if [ ! -e Makefile ] ; then
 fi
 make
 make install
+popd
+
+# Make ssrf-version.h file for subsurface
+pushd subsurface
+SSRF_VERSION=`scripts/get-version linux`
+echo "#define VERSION_STRING \"${SSRF_VERSION}\"" > ssrf-version.h
 popd
 
 popd # from crossbuild
