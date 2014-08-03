@@ -93,6 +93,21 @@ if [ ! -e $PKG_CONFIG_PATH/libxslt.pc ] ; then
 	popd
 fi
 
+# libz.a not available in android arm ? We shall cross compile it.
+if [ ! -e zlib-1.2.8.tar.gz ] ; then
+	wget http://cznic.dl.sourceforge.net/project/libpng/zlib/1.2.8/zlib-1.2.8.tar.gz
+fi
+if [ ! -e zlib-1.2.8 ] ; then
+	tar -zxf zlib-1.2.8.tar.gz
+fi
+if [ ! -e $PKG_CONFIG_PATH/zlib.pc ] ; then
+	pushd zlib-1.2.8
+	./configure --prefix=${PREFIX}
+	make
+	make install
+	popd
+fi
+
 if [ ! -e libzip-0.11.2.tar.gz ] ; then
 	wget http://www.nih.at/libzip/libzip-0.11.2.tar.gz
 fi
