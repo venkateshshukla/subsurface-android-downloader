@@ -1,8 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+    tools:context=".Main">
+    <ScrollView
+        android:id="@+id/svMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/llOkCancel" >
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_heading_vendor"
+                android:textSize="@dimen/heading3_string_size" />
+
+            <Spinner
+                android:id="@+id/spnVendor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_heading_product"
+                android:textSize="@dimen/heading3_string_size" />
+
+            <Spinner
+                android:id="@+id/spnProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_heading_otherpref"
+                android:textSize="@dimen/heading3_string_size" />
+
+            <CheckBox
+                android:id="@+id/cbForce"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cb_force_dives"
+                android:textSize="@dimen/content_string_size"
+                android:checked="false" />
+
+            <CheckBox
+                android:id="@+id/cbPrefer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cb_prefer_dives"
+                android:textSize="@dimen/content_string_size"
+                android:checked="false" />
+
+            <LinearLayout
+                android:id="@+id/llLogFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <CheckBox
+                    android:id="@+id/cbLogFile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="60"
+                    android:text="@string/cb_log_file"
+                    android:textSize="@dimen/content_string_size"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:layout_margin="5dp"
+                    android:background="#d0d0d0" />
+
+                <TextView
+                    android:id="@+id/tvLogFile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="39.5"
+                    android:text="@string/tv_default_logfile"
+                    android:textSize="@dimen/content_string_size"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/llDumpFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <CheckBox
+                    android:id="@+id/cbDumpFile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="60"
+                    android:text="@string/cb_dump_file" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:layout_margin="5dp"
+                    android:background="#d0d0d0" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="39.5"
+                    android:text="@string/tv_default_dumpfile"
+                    android:textSize="@dimen/content_string_size"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:id="@+id/llOkCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/bOK"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/b_ok" />
+        <Button
+            android:id="@+id/bCancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/b_cancel" />
+    </LinearLayout>
+</RelativeLayout>
+

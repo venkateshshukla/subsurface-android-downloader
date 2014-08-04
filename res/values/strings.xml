@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Divecomputer Downloader</string>
+    <string name="tv_heading_vendor">Vendor</string>
+    <string name="tv_heading_product">Product</string>
+    <string name="tv_heading_otherpref">Other preferences</string>
+    <string name="cb_force_dives">Force download of all dives</string>
+    <string name="cb_prefer_dives">Always prefer downloaded dives</string>
+    <string name="cb_log_file">Save logfile</string>
+    <string name="cb_dump_file">Save dumpfile</string>
+    <string name="tv_default_logfile">Default logfile</string>
+    <string name="tv_default_dumpfile">Default dumpfile</string>
+    <string name="b_ok">OK</string>
+    <string name="b_cancel">Cancel</string>
 </resources>
