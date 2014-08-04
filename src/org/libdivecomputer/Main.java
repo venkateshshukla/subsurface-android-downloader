@@ -10,6 +10,12 @@ import android.widget.TextView;
 
 public class Main extends Activity
 {
+	static {
+		System.loadLibrary("subsurface_jni");
+	}
+	private native String[] getVendorList();
+	private native String[] getProductList(String vndr);
+
 	private Spinner spVendor;
 	private Spinner spProduct;
 	private Button bOk;
@@ -27,7 +33,7 @@ public class Main extends Activity
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.main);
 	    initialiseViews();
-	    String[] vendorlist = NativeHelper.getVendorList();
+	    String[] vendorlist = getVendorList();
 	}
 
 	private void initialiseViews()
