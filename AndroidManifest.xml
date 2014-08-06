@@ -12,7 +12,7 @@
 	    android:icon="@drawable/ic_launcher"
 	    android:theme="@android:style/Theme.Holo.Light" >
         <activity android:name="Main"
-                  android:label="@string/app_name">
+                  android:label="@string/title_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -22,6 +22,13 @@
             </intent-filter>
             <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
+	</activity>
+        <activity android:name="ImportProgress"
+		android:label="@string/title_import_progress">
         </activity>
+        <activity android:name="ViewFile"
+		android:label="@string/title_view_file">
+        </activity>
+
     </application>
 </manifest>

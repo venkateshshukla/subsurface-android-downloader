@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.content.Intent;
 
 public class Main extends Activity
 {
@@ -33,7 +34,7 @@ public class Main extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
                 super.onCreate(savedInstanceState);
-                setContentView(R.layout.main);
+                setContentView(R.layout.activity_main);
                 initialiseViews();
                 String[] vendorlist = getVendorList();
 	}
@@ -94,6 +95,8 @@ public class Main extends Activity
 
 	public void onOkClicked(View v)
 	{
+		Intent in = new Intent(this, ImportProgress.class);
+		startActivity(in);
 	}
 
 	public void onCancelClicked(View v)
