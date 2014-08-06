@@ -21,7 +21,7 @@
 // Hence it can be cached.
 static JavaVM *java_vm;
 
-jobjectArray get_vendor_list(JNIEnv *env, jobject jobj)
+JNIEXPORT jobjectArray JNICALL get_vendor_list(JNIEnv *env, jobject jobj)
 {
 	LOG_F("get_vendor_list");
 	dc_iterator_t *iterator = NULL;
@@ -39,7 +39,7 @@ jobjectArray get_vendor_list(JNIEnv *env, jobject jobj)
 	return NULL;
 }
 
-jobjectArray get_product_list(JNIEnv *env, jobject jobj, jobject vndr)
+JNIEXPORT jobjectArray JNICALL get_product_list(JNIEnv *env, jobject jobj, jobject vndr)
 {
 	LOG_F("get_product_list");
 	return NULL;
