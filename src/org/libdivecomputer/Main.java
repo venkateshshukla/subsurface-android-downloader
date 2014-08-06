@@ -3,6 +3,8 @@ package org.libdivecomputer;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
@@ -30,11 +32,25 @@ public class Main extends Activity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.main);
-	    initialiseViews();
-	    String[] vendorlist = getVendorList();
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.main);
+                initialiseViews();
+                String[] vendorlist = getVendorList();
 	}
+        @Override
+        public boolean onCreateOptionsMenu(Menu menu) {
+                getMenuInflater().inflate(R.menu.main, menu);
+                return true;
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.action_settings) {
+                        return true;
+                }
+                return super.onOptionsItemSelected(item);
+        }
 
 	private void initialiseViews()
 	{
