@@ -9,6 +9,8 @@ import org.libdivecomputer.R;
 
 public class ImportProgress extends Activity {
 
+	private static final String TAG = "ImportProgress";
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
