@@ -7,6 +7,8 @@ import android.view.MenuItem;
 
 public class ViewFile extends Activity {
 
+        private static final String TAG = "ViewFile";
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
