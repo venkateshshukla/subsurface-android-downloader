@@ -101,9 +101,9 @@ public class Main extends Activity implements OnItemSelectedListener {
         }
 
         private void initialiseVars() {
-                dcData = new DcData();
+                dcData = new DcData(this);
                 vendorList = new ArrayList<String>();
-		productList = new ArrayList<String>();
+                productList = new ArrayList<String>();
                 deviceMap = new HashMap<String, ArrayList<String>>();
         }
 
@@ -116,31 +116,23 @@ public class Main extends Activity implements OnItemSelectedListener {
                 boolean checked = ((CheckBox) v).isChecked();
                 switch (v.getId()) {
                 case R.id.cbForce:
-                        if (checked) {
-                        } else {
-                        }
+                        dcData.setForce(checked);
                         break;
                 case R.id.cbPrefer:
-                        if (checked) {
-                        } else {
-                        }
+                        dcData.setPrefer(checked);
                         break;
                 case R.id.cbLogFile:
-                        if (checked) {
-                        } else {
-                        }
+                        dcData.setLog(checked);
                         break;
                 case R.id.cbDumpFile:
-                        if (checked) {
-                        } else {
-                        }
+                        dcData.setDump(checked);
                         break;
                 }
 
         }
 
         public void onOkClicked(View v) {
-                if (dcData.getVendor() == "" || dcData.getProduct() == "") {
+                if (dcData.getVendor() == null || dcData.getProduct() == null) {
                         showInvalidDialog();
                         return;
                 }

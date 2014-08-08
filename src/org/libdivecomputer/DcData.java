@@ -1,6 +1,10 @@
 package org.libdivecomputer;
 
-public class DcData {
+import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class DcData implements Parcelable {
         private String vendor;
         private String product;
         private boolean force;
@@ -72,5 +76,58 @@ public class DcData {
 
         public void setDumpfilepath(String dumpfilepath) {
                 this.dumpfilepath = dumpfilepath;
+        }
+
+        public DcData(Context c) {
+                super();
+                this.vendor = null;
+                this.product = null;
+                this.force = false;
+                this.prefer = false;
+                this.dump = false;
+                this.log = false;
+                this.logfilepath = null;
+                this.logfilepath = null;
+        }
+
+        @Override
+        public int describeContents() {
+                // TODO Auto-generated method stub
+                return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(vendor);
+                dest.writeString(product);
+                dest.writeByte((byte) (force ? 1 : 0));
+                dest.writeByte((byte) (prefer ? 1 : 0));
+                dest.writeByte((byte) (log ? 1 : 0));
+                dest.writeByte((byte) (dump ? 1 : 0));
+                dest.writeString(logfilepath);
+                dest.writeString(dumpfilepath);
+        }
+
+        public static final Parcelable.Creator<DcData> CREATOR = new Parcelable.Creator<DcData>() {
+                @Override
+                public DcData createFromParcel(Parcel in) {
+                        return new DcData(in);
+                }
+
+                @Override
+                public DcData[] newArray(int size) {
+                        return new DcData[size];
+                }
+        };
+
+        private DcData(Parcel in) {
+                vendor = in.readString();
+                product = in.readString();
+                force = in.readByte() != 0;
+                prefer = in.readByte() != 0;
+                log = in.readByte() != 0;
+                dump = in.readByte() != 0;
+                logfilepath = in.readString();
+                dumpfilepath = in.readString();
         }
 }
