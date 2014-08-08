@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,15 +26,6 @@ public class Main extends Activity implements OnItemSelectedListener {
 
         private native void getDeviceMap(HashMap<String, ArrayList<String>> hm);
 
-        private String vendor;
-        private String product;
-        private boolean force;
-        private boolean prefer;
-        private boolean logfile;
-        private boolean dumpfile;
-        private String logfilepath;
-        private String dumpfilepath;
-
         private Spinner spVendor;
         private Spinner spProduct;
         private Button bOk;
@@ -52,6 +43,8 @@ public class Main extends Activity implements OnItemSelectedListener {
         private ArrayList<String> vendorList;
         private ArrayList<String> productList;
 
+        private DcData dcData;
+
         private static final String TAG = "Main";
 
         @Override
@@ -59,7 +52,7 @@ public class Main extends Activity implements OnItemSelectedListener {
                 super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_main);
 
-		initialiseVars();
+                initialiseVars();
                 initialiseViews();
                 addListeners();
 
@@ -74,7 +67,6 @@ public class Main extends Activity implements OnItemSelectedListener {
                 spVendor.setAdapter(vendorAdapter);
 
                 productList.addAll(deviceMap.get(vendorList.get(0)));
-                Collections.sort(productList);
                 productAdapter = new ArrayAdapter<String>(this,
                                 android.R.layout.simple_spinner_item,
                                 productList);
@@ -109,15 +101,8 @@ public class Main extends Activity implements OnItemSelectedListener {
         }
 
         private void initialiseVars() {
-                vendor = "";
-                product = "";
-                force = false;
-                prefer = false;
-                logfile = false;
-                dumpfile = false;
-                logfilepath = "";
-                dumpfilepath = "";
-		vendorList = new ArrayList<String>();
+                dcData = new DcData();
+                vendorList = new ArrayList<String>();
 		productList = new ArrayList<String>();
                 deviceMap = new HashMap<String, ArrayList<String>>();
         }
@@ -155,6 +140,10 @@ public class Main extends Activity implements OnItemSelectedListener {
         }
 
         public void onOkClicked(View v) {
+                if (dcData.getVendor() == "" || dcData.getProduct() == "") {
+                        showInvalidDialog();
+                        return;
+                }
                 Intent in = new Intent(this, ImportProgress.class);
                 startActivity(in);
         }
@@ -172,10 +161,10 @@ public class Main extends Activity implements OnItemSelectedListener {
                         Collections.sort(productList);
                         productAdapter.clear();
                         productAdapter.addAll(productList);
-                        vendor = s;
+                        dcData.setVendor(s);
                         break;
                 case R.id.spnProduct:
-                        product = s;
+                        dcData.setProduct(s);
                         break;
                 }
 
@@ -183,8 +172,15 @@ public class Main extends Activity implements OnItemSelectedListener {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
 
+        }
+
+        private void showInvalidDialog() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.dialog_select_message).setTitle(
+                                R.string.dialog_select_title);
+                AlertDialog dialog = builder.create();
+                dialog.show();
         }
 
 }

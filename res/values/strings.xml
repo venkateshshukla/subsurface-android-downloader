@@ -18,6 +18,8 @@
     <string name="tv_default_dumpfile">Default dumpfile</string>
     <string name="b_ok">OK</string>
     <string name="b_cancel">Cancel</string>
+    <string name="dialog_select_title">Invalid Option.</string>
+    <string name="dialog_select_message">Select at least one option.</string>
 
 </resources>
 
