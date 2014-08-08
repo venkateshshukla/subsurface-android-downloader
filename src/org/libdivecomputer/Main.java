@@ -46,6 +46,7 @@ public class Main extends Activity implements OnItemSelectedListener {
         private DcData dcData;
 
         private static final String TAG = "Main";
+        private static final String DCDATA = "DivecomputerData";
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -136,8 +137,17 @@ public class Main extends Activity implements OnItemSelectedListener {
                         showInvalidDialog();
                         return;
                 }
+                putValDcData();
                 Intent in = new Intent(this, ImportProgress.class);
+                in.putExtra(DCDATA, dcData);
                 startActivity(in);
+        }
+
+        private void putValDcData() {
+                dcData.setPrefer(cbPrefer.isChecked());
+                dcData.setForce(cbForce.isChecked());
+                dcData.setLog(cbLogfile.isChecked());
+                dcData.setDump(cbDumpfile.isChecked());
         }
 
         public void onCancelClicked(View v) {
