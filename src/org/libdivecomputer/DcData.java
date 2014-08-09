@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class DcData implements Parcelable {
+        private int fd;
         private String vendor;
         private String product;
         private boolean force;
@@ -13,6 +14,14 @@ public class DcData implements Parcelable {
         private boolean dump;
         private String logfilepath;
         private String dumpfilepath;
+
+        public int getFd() {
+                return fd;
+        }
+
+        public void setFd(int fd) {
+                this.fd = fd;
+        }
 
         public String getVendor() {
                 return vendor;
@@ -80,6 +89,7 @@ public class DcData implements Parcelable {
 
         public DcData(Context c) {
                 super();
+                this.fd = -1;
                 this.vendor = null;
                 this.product = null;
                 this.force = false;
@@ -98,6 +108,7 @@ public class DcData implements Parcelable {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
+                dest.writeInt(fd);
                 dest.writeString(vendor);
                 dest.writeString(product);
                 dest.writeByte((byte) (force ? 1 : 0));
@@ -121,6 +132,7 @@ public class DcData implements Parcelable {
         };
 
         private DcData(Parcel in) {
+                fd = in.readInt();
                 vendor = in.readString();
                 product = in.readString();
                 force = in.readByte() != 0;

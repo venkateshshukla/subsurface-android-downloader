@@ -89,6 +89,7 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 {
 	LOG_F("init_dcdata");
 	jclass DcData = (*env)->GetObjectClass(env, jdcdata);
+	jmethodID getFd = (*env)->GetMethodID(env, DcData, "getFd", "()I");
 	jmethodID getVendor = (*env)->GetMethodID(env, DcData, "getVendor", "()Ljava/lang/String;");
 	jmethodID getProduct = (*env)->GetMethodID(env, DcData, "getProduct", "()Ljava/lang/String;");
 	jmethodID isForce = (*env)->GetMethodID(env, DcData, "isForce", "()Z");
@@ -98,6 +99,7 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 	jmethodID getLogfilepath = (*env)->GetMethodID(env, DcData, "getLogfilepath", "()Ljava/lang/String;");
 	jmethodID getDumpfilepath = (*env)->GetMethodID(env, DcData, "getDumpfilepath", "()Ljava/lang/String;");
 
+	jint jfd =(*env)->CallIntMethod(env, jdcdata, getFd);
 	jstring jvendor = (*env)->CallObjectMethod(env, jdcdata, getVendor);
 	jstring jproduct = (*env)->CallObjectMethod(env, jdcdata, getProduct);
 	jboolean jforce = (*env)->CallBooleanMethod(env, jdcdata, isForce);
@@ -107,6 +109,7 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 	jstring jlogfilepath = (*env)->CallObjectMethod(env, jdcdata, getLogfilepath);
 	jstring jdumpfilepath = (*env)->CallObjectMethod(env, jdcdata, getDumpfilepath);
 
+	dcdata.fd = jfd;
 	dcdata.force_download = jforce;
 	dcdata.libdc_log = jlog;
 	dcdata.libdc_dump = jdump;
