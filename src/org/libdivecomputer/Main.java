@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.libdivecomputer.ui.UsbListAdapter;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +28,10 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class Main extends Activity implements OnItemSelectedListener {
+public class Main extends Activity
+                implements
+                        OnItemSelectedListener,
+                        OnClickListener {
         static {
                 System.loadLibrary("subsurface_jni");
         }
@@ -50,6 +58,8 @@ public class Main extends Activity implements OnItemSelectedListener {
         private DcData dcData;
 
         private UsbManager usbManager;
+        private HashMap<String, UsbDevice> usbDeviceMap;
+        private UsbListAdapter usbListAdapter;
 
         private static final String TAG = "Main";
         private static final String DCDATA = "DivecomputerData";
@@ -58,7 +68,6 @@ public class Main extends Activity implements OnItemSelectedListener {
         public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_main);
-
                 initialiseVars();
                 initialiseViews();
                 addListeners();
@@ -118,6 +127,7 @@ public class Main extends Activity implements OnItemSelectedListener {
                 productList = new ArrayList<String>();
                 deviceMap = new HashMap<String, ArrayList<String>>();
                 usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+                usbListAdapter = new UsbListAdapter(this);
         }
 
         private void addListeners() {
@@ -128,44 +138,46 @@ public class Main extends Activity implements OnItemSelectedListener {
         public void onCheckboxClicked(View v) {
                 boolean checked = ((CheckBox) v).isChecked();
                 switch (v.getId()) {
-                case R.id.cbForce:
-                        dcData.setForce(checked);
-                        break;
-                case R.id.cbPrefer:
-                        dcData.setPrefer(checked);
-                        break;
-                case R.id.cbLogFile:
-                        dcData.setLog(checked);
-                        break;
-                case R.id.cbDumpFile:
-                        dcData.setDump(checked);
-                        break;
+                        case R.id.cbForce :
+                                dcData.setForce(checked);
+                                break;
+                        case R.id.cbPrefer :
+                                dcData.setPrefer(checked);
+                                break;
+                        case R.id.cbLogFile :
+                                dcData.setLog(checked);
+                                break;
+                        case R.id.cbDumpFile :
+                                dcData.setDump(checked);
+                                break;
                 }
 
         }
 
         public void onOkClicked(View v) {
                 if (dcData.getVendor() == null || dcData.getProduct() == null) {
-                        showInvalidDialog(R.string.dialog_invalid_none);
+                        showInvalidDialog(R.string.dialog_error_invalid,
+                                        R.string.dialog_invalid_none);
                         return;
                 }
                 if (!checkUsbDevice()) {
-                        showInvalidDialog(R.string.dialog_invalid_nousb);
+                        showInvalidDialog(R.string.dialog_error_invalid,
+                                        R.string.dialog_invalid_nousb);
                         return;
                 }
                 putValDcData();
-                Intent in = new Intent(this, ImportProgress.class);
-                in.putExtra(DCDATA, dcData);
-                startActivity(in);
         }
 
         private boolean checkUsbDevice() {
-                HashMap<String, UsbDevice> deviceMap = usbManager
-                                .getDeviceList();
-                if (deviceMap.size() == 0) {
+                usbDeviceMap = usbManager.getDeviceList();
+                if (usbDeviceMap.size() == 0) {
                         Log.d(TAG, "No USB device is attached.");
                         return false;
                 }
+                ArrayList<UsbDevice> al = new ArrayList<UsbDevice>();
+                al.addAll(usbDeviceMap.values());
+                usbListAdapter.setUsbList(al);
+                showUsbListDialog();
                 return true;
         }
 
@@ -184,18 +196,52 @@ public class Main extends Activity implements OnItemSelectedListener {
                         int position, long id) {
                 String s = parent.getItemAtPosition(position).toString();
                 switch (parent.getId()) {
-                case R.id.spnVendor:
-                        productList = deviceMap.get(s);
-                        Collections.sort(productList);
-                        productAdapter.clear();
-                        productAdapter.addAll(productList);
-                        dcData.setVendor(s);
-                        break;
-                case R.id.spnProduct:
-                        dcData.setProduct(s);
-                        break;
+                        case R.id.spnVendor :
+                                productList = deviceMap.get(s);
+                                Collections.sort(productList);
+                                productAdapter.clear();
+                                productAdapter.addAll(productList);
+                                dcData.setVendor(s);
+                                break;
+                        case R.id.spnProduct :
+                                dcData.setProduct(s);
+                                break;
                 }
 
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+                UsbDevice usbDevice = (UsbDevice) usbListAdapter.getItem(which);
+                // Check if we have permission to use the USB device.
+                if (!usbManager.hasPermission(usbDevice)) {
+                        Log.d(TAG, "We don't have permission to use USB device");
+                        showInvalidDialog(R.string.dialog_error_usb,
+                                        R.string.dialog_error_usbpermission);
+                        return;
+                        // Get permission for device.
+                }
+                UsbDeviceConnection usbCon = usbManager.openDevice(usbDevice);
+                if (usbCon == null) {
+                        // Failed to open device.
+                        Log.d(TAG,
+                                        "Failed to open the device "
+                                                        + usbDevice.toString());
+                        return;
+                }
+
+                int fd = usbCon.getFileDescriptor();
+                if (fd <= 0) {
+                        // Some error during opening the device. Return.
+                        showInvalidDialog(R.string.dialog_error_usb,
+                                        R.string.dialog_error_usbpermission);
+                        return;
+                }
+                dcData.setFd(fd);
+
+                Intent i = new Intent(this, ImportProgress.class);
+                i.putExtra(DCDATA, dcData);
+                startActivity(i);
         }
 
         @Override
@@ -203,10 +249,17 @@ public class Main extends Activity implements OnItemSelectedListener {
 
         }
 
-        private void showInvalidDialog(int message) {
+        private void showInvalidDialog(int title, int message) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(message).setTitle(
-                                R.string.dialog_invalid_title);
+                builder.setMessage(message).setTitle(title);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+        }
+
+        private void showUsbListDialog() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.dialog_usb_title);
+                builder.setAdapter(usbListAdapter, this);
                 AlertDialog dialog = builder.create();
                 dialog.show();
         }

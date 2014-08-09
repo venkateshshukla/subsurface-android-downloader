@@ -116,6 +116,8 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 	dcdata.deviceid = 0;
 	dcdata.diveid = 0;
 
+	LOGD("file descriptor received : %d\n", jfd);
+
 	if (jvendor != NULL) {
 		const char *vndr = (*env)->GetStringUTFChars(env, jvendor, NULL);
 		char *v = (char *) malloc(STRSIZE);

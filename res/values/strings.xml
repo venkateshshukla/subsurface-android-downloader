@@ -18,9 +18,15 @@
     <string name="tv_default_dumpfile">Default dumpfile</string>
     <string name="b_ok">OK</string>
     <string name="b_cancel">Cancel</string>
-    <string name="dialog_invalid_title">Invalid input values.</string>
+    <string name="dialog_error_invalid">Invalid values.</string>
+    <string name="dialog_error_usb">USB Error.</string>
     <string name="dialog_invalid_none">Select at least one option.</string>
     <string name="dialog_invalid_nousb">No USB device is attached.</string>
+    <string name="dialog_usb_title">Pick a USB device.</string>
+    <string name="dialog_error_usbpermission">No permission to use USB device.</string>
+    <string name="dialog_error_openusb">Error opening USB device.</string>
+    <string name="dummy_device_name">USB Device</string>
+    <string name="dummy_device_vid">0xFFFF</string>
+    <string name="dummy_device_pid">0xFFFF</string>
 
 </resources>
-
