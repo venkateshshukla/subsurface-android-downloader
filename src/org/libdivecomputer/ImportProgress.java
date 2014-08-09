@@ -12,6 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ImportProgress extends Activity {
+        static {
+                System.loadLibrary("subsurface_jni");
+        }
+
+        private native void initDcData(DcData dc);
 
         private static final String TAG = "ImportProgress";
         private static final String DCDATA = "DivecomputerData";
@@ -43,6 +48,7 @@ public class ImportProgress extends Activity {
                                         Toast.LENGTH_LONG).show();
                         finish();
                 }
+                initDcData(dcData);
                 DcImportTask importTask = new DcImportTask(dcData);
         }
 
@@ -56,15 +62,6 @@ public class ImportProgress extends Activity {
         public boolean onCreateOptionsMenu(Menu menu) {
                 getMenuInflater().inflate(R.menu.import_progress, menu);
                 return true;
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.action_cancel) {
-                        return true;
-                }
-                return super.onOptionsItemSelected(item);
         }
 
         public void onImportCancelClicked(MenuItem item) {

@@ -13,14 +13,37 @@
 #include <libdivecomputer/device.h>
 #include <libdivecomputer/parser.h>
 
+#include "libdivecomputer.h"
+
 #include <jni.h>
 
 #define LOG_TAG "subsurface_jni.c"
 #define LOG_F(fn_name) __android_log_write(ANDROID_LOG_DEBUG, LOG_TAG, "Called : " fn_name )
 
-// A single JavaVM is shared by all threads in a process.
-// Hence it can be cached.
-static JavaVM *java_vm;
+#define STRSIZE 64
+#define PATHSIZE 128
+
+static device_data_t dcdata;
+
+void device_descriptor_lookup(device_data_t *d)
+{
+	dc_iterator_t *iterator = NULL;
+	dc_descriptor_t *descriptor = NULL;
+	struct mydescriptor *mydescriptor;
+
+	dc_descriptor_iterator(&iterator);
+	while (dc_iterator_next(iterator, &descriptor) == DC_STATUS_SUCCESS) {
+		const char *vendor = dc_descriptor_get_vendor(descriptor);
+		const char *product = dc_descriptor_get_product(descriptor);
+		if (!strcmp(vendor, d->vendor) && !strcmp(product, d->product)) {
+			LOGD("DC Descriptor found : %s / %s\n", vendor, product);
+			d->descriptor = descriptor;
+			break;
+		}
+	}
+	dc_iterator_free(iterator);
+
+}
 
 JNIEXPORT void JNICALL get_device_map(JNIEnv *env, jobject jobj, jobject jhashMap)
 {
@@ -62,10 +85,68 @@ JNIEXPORT void JNICALL get_device_map(JNIEnv *env, jobject jobj, jobject jhashMa
 	dc_iterator_free(iterator);
 }
 
+JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
+{
+	LOG_F("init_dcdata");
+	jclass DcData = (*env)->GetObjectClass(env, jdcdata);
+	jmethodID getVendor = (*env)->GetMethodID(env, DcData, "getVendor", "()Ljava/lang/String;");
+	jmethodID getProduct = (*env)->GetMethodID(env, DcData, "getProduct", "()Ljava/lang/String;");
+	jmethodID isForce = (*env)->GetMethodID(env, DcData, "isForce", "()Z");
+	jmethodID isPrefer = (*env)->GetMethodID(env, DcData, "isPrefer", "()Z");
+	jmethodID isLog = (*env)->GetMethodID(env, DcData, "isLog", "()Z");
+	jmethodID isDump = (*env)->GetMethodID(env, DcData, "isDump", "()Z");
+	jmethodID getLogfilepath = (*env)->GetMethodID(env, DcData, "getLogfilepath", "()Ljava/lang/String;");
+	jmethodID getDumpfilepath = (*env)->GetMethodID(env, DcData, "getDumpfilepath", "()Ljava/lang/String;");
+
+	jstring jvendor = (*env)->CallObjectMethod(env, jdcdata, getVendor);
+	jstring jproduct = (*env)->CallObjectMethod(env, jdcdata, getProduct);
+	jboolean jforce = (*env)->CallBooleanMethod(env, jdcdata, isForce);
+	jboolean jprefer = (*env)->CallBooleanMethod(env, jdcdata, isPrefer);
+	jboolean jlog = (*env)->CallBooleanMethod(env, jdcdata, isLog);
+	jboolean jdump = (*env)->CallBooleanMethod(env, jdcdata, isDump);
+	jstring jlogfilepath = (*env)->CallObjectMethod(env, jdcdata, getLogfilepath);
+	jstring jdumpfilepath = (*env)->CallObjectMethod(env, jdcdata, getDumpfilepath);
+
+	dcdata.force_download = jforce;
+	dcdata.libdc_log = jlog;
+	dcdata.libdc_dump = jdump;
+	dcdata.deviceid = 0;
+	dcdata.diveid = 0;
+
+	if (jvendor != NULL) {
+		const char *vndr = (*env)->GetStringUTFChars(env, jvendor, NULL);
+		char *v = (char *) malloc(STRSIZE);
+		strncpy(v, vndr, STRSIZE);
+		dcdata.vendor = v;
+		(*env)->ReleaseStringUTFChars(env, jvendor, vndr);
+	}
+	if (jproduct != NULL) {
+		const char *prdt = (*env)->GetStringUTFChars(env, jproduct, NULL);
+		char *p = (char *) malloc(STRSIZE);
+		strncpy(p, prdt, STRSIZE);
+		dcdata.product = p;
+		(*env)->ReleaseStringUTFChars(env, jproduct, prdt);
+
+	}
+
+	device_descriptor_lookup(&dcdata);
+
+	if (jlogfilepath != NULL) {
+		const char *logfp = (*env)->GetStringUTFChars(env, jlogfilepath, NULL);
+		(*env)->ReleaseStringUTFChars(env, jlogfilepath, logfp);
+
+	}
+	if (jdumpfilepath != NULL) {
+		const char *dumpfp = (*env)->GetStringUTFChars(env, jdumpfilepath, NULL);
+		(*env)->ReleaseStringUTFChars(env, jdumpfilepath, dumpfp);
+
+	}
+
+	LOGD("successfully finished init_dcdata");
+}
+
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
-	java_vm = vm;
-
 	// Get JNI Env for all function calls
 	JNIEnv* env;
 	if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_6) != JNI_OK) {
@@ -74,22 +155,43 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	}
 
 	// Find the class calling native function
-	// org/libdivecomputer/NativeHelper.java
-	jclass NativeHelper = (*env)->FindClass(env, "org/libdivecomputer/Main");
-	if (NativeHelper == NULL) {
+	// org/libdivecomputer/Main.java
+	jclass Main = (*env)->FindClass(env, "org/libdivecomputer/Main");
+	if (Main == NULL) {
 		LOGD ("FindClass failed : org.libdivecomputer.Main\n");
 		return -1;
 	}
 
 	// Register native method for getUsbPermission
-	JNINativeMethod nm[] = {
-		{ "getDeviceMap",	"(Ljava/util/HashMap;)V",	get_device_map },
+	JNINativeMethod nm1[] = {
+		{ "getDeviceMap", "(Ljava/util/HashMap;)V", get_device_map },
+
 	};
 
-	if ((*env)->RegisterNatives(env, NativeHelper, nm , sizeof (nm) / sizeof (nm[0]))) {
+	if ((*env)->RegisterNatives(env, Main, nm1 , sizeof (nm1) / sizeof (nm1[0]))) {
 	     LOGD ("RegisterNatives Failed.\n");
 	     return -1;
 	}
+
+	// Find the class calling native function
+	// org/libdivecomputer/ImportProgress.java
+	jclass ImportProgress = (*env)->FindClass(env, "org/libdivecomputer/ImportProgress");
+	if (ImportProgress == NULL) {
+		LOGD ("FindClass failed : org.libdivecomputer.ImportProgress\n");
+		return -1;
+	}
+
+	// Register native method for getUsbPermission
+	JNINativeMethod nm2[] = {
+		{ "initDcData",	"(Lorg/libdivecomputer/DcData;)V", init_dcdata },
+
+	};
+
+	if ((*env)->RegisterNatives(env, ImportProgress, nm2 , sizeof (nm2) / sizeof (nm2[0]))) {
+	     LOGD ("RegisterNatives Failed.\n");
+	     return -1;
+	}
+
 
 	return JNI_VERSION_1_6;
 }
