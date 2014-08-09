@@ -6,8 +6,12 @@ import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +49,8 @@ public class Main extends Activity implements OnItemSelectedListener {
 
         private DcData dcData;
 
+        private UsbManager usbManager;
+
         private static final String TAG = "Main";
         private static final String DCDATA = "DivecomputerData";
 
@@ -59,6 +65,8 @@ public class Main extends Activity implements OnItemSelectedListener {
 
                 getDeviceMap(deviceMap);
 
+                // Fill the vendorlist spinner with the Vendor names obtained
+                // from libdivecomputer
                 vendorList.addAll(deviceMap.keySet());
                 Collections.sort(vendorList);
                 vendorAdapter = new ArrayAdapter<String>(this,
@@ -67,12 +75,15 @@ public class Main extends Activity implements OnItemSelectedListener {
                 vendorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spVendor.setAdapter(vendorAdapter);
 
+                // Fill the productlist spinner with the vendor names obtained
+                // from libdivecomputers.
                 productList.addAll(deviceMap.get(vendorList.get(0)));
                 productAdapter = new ArrayAdapter<String>(this,
                                 android.R.layout.simple_spinner_item,
                                 productList);
                 productAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spProduct.setAdapter(productAdapter);
+
         }
 
         @Override
@@ -106,6 +117,7 @@ public class Main extends Activity implements OnItemSelectedListener {
                 vendorList = new ArrayList<String>();
                 productList = new ArrayList<String>();
                 deviceMap = new HashMap<String, ArrayList<String>>();
+                usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         }
 
         private void addListeners() {
@@ -134,13 +146,27 @@ public class Main extends Activity implements OnItemSelectedListener {
 
         public void onOkClicked(View v) {
                 if (dcData.getVendor() == null || dcData.getProduct() == null) {
-                        showInvalidDialog();
+                        showInvalidDialog(R.string.dialog_invalid_none);
+                        return;
+                }
+                if (!checkUsbDevice()) {
+                        showInvalidDialog(R.string.dialog_invalid_nousb);
                         return;
                 }
                 putValDcData();
                 Intent in = new Intent(this, ImportProgress.class);
                 in.putExtra(DCDATA, dcData);
                 startActivity(in);
+        }
+
+        private boolean checkUsbDevice() {
+                HashMap<String, UsbDevice> deviceMap = usbManager
+                                .getDeviceList();
+                if (deviceMap.size() == 0) {
+                        Log.d(TAG, "No USB device is attached.");
+                        return false;
+                }
+                return true;
         }
 
         private void putValDcData() {
@@ -177,10 +203,10 @@ public class Main extends Activity implements OnItemSelectedListener {
 
         }
 
-        private void showInvalidDialog() {
+        private void showInvalidDialog(int message) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(R.string.dialog_select_message).setTitle(
-                                R.string.dialog_select_title);
+                builder.setMessage(message).setTitle(
+                                R.string.dialog_invalid_title);
                 AlertDialog dialog = builder.create();
                 dialog.show();
         }

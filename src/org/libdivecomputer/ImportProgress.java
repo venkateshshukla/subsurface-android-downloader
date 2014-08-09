@@ -67,6 +67,7 @@ public class ImportProgress extends Activity {
         public void onImportCancelClicked(MenuItem item) {
                 // Undertake steps to safely cancel import and reset to
                 // beginning
+                finish();
         }
 
         private class DcImportTask extends AsyncTask<DcData, Integer, Boolean> {
