@@ -43,9 +43,7 @@ public class ImportProgress extends Activity {
                 pbImport.setMax(PROGRESSMAX);
                 if (!isExternalStorageWritable()) {
                         Log.d(TAG, "External storage not writable.");
-                        Toast.makeText(this,
-                                        "External storage is not writable.",
-                                        Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "External storage is not writable.", Toast.LENGTH_LONG).show();
                         finish();
                 }
                 initDcData(dcData);

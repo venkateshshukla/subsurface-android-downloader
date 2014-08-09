@@ -8,10 +8,13 @@ import org.libdivecomputer.ui.UsbListAdapter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -28,10 +31,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class Main extends Activity
-                implements
-                        OnItemSelectedListener,
-                        OnClickListener {
+public class Main extends Activity implements OnItemSelectedListener, OnClickListener {
         static {
                 System.loadLibrary("subsurface_jni");
         }
@@ -58,11 +58,15 @@ public class Main extends Activity
         private DcData dcData;
 
         private UsbManager usbManager;
+        private UsbDevice usbDevice;
         private HashMap<String, UsbDevice> usbDeviceMap;
         private UsbListAdapter usbListAdapter;
+        private PendingIntent usbPendingIntent;
+        private BroadcastReceiver usbPermissionReceiver;
 
         private static final String TAG = "Main";
         private static final String DCDATA = "DivecomputerData";
+        private static final String ACTION_USB_PERMISSION = "org.libdivecomputer.USB_PERMISSION";
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -78,18 +82,14 @@ public class Main extends Activity
                 // from libdivecomputer
                 vendorList.addAll(deviceMap.keySet());
                 Collections.sort(vendorList);
-                vendorAdapter = new ArrayAdapter<String>(this,
-                                android.R.layout.simple_spinner_item,
-                                vendorList);
+                vendorAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, vendorList);
                 vendorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spVendor.setAdapter(vendorAdapter);
 
                 // Fill the productlist spinner with the vendor names obtained
                 // from libdivecomputers.
                 productList.addAll(deviceMap.get(vendorList.get(0)));
-                productAdapter = new ArrayAdapter<String>(this,
-                                android.R.layout.simple_spinner_item,
-                                productList);
+                productAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, productList);
                 productAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spProduct.setAdapter(productAdapter);
 
@@ -128,6 +128,29 @@ public class Main extends Activity
                 deviceMap = new HashMap<String, ArrayList<String>>();
                 usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
                 usbListAdapter = new UsbListAdapter(this);
+                usbPermissionReceiver = new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                                String action = intent.getAction();
+                                if (ACTION_USB_PERMISSION.equals(action)) {
+                                        synchronized (this) {
+                                                UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                                                if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                                                        Log.d(TAG, "Recieved a USB Device permission");
+                                                        if (device != null) {
+                                                                usbDevice = device;
+                                                                openUsbAndImport();
+                                                        }
+                                                } else {
+                                                        Log.d(TAG, "permission denied for device " + device);
+                                                }
+                                        }
+                                }
+                        }
+                };
+                usbPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+                registerReceiver(usbPermissionReceiver, filter);
         }
 
         private void addListeners() {
@@ -156,13 +179,11 @@ public class Main extends Activity
 
         public void onOkClicked(View v) {
                 if (dcData.getVendor() == null || dcData.getProduct() == null) {
-                        showInvalidDialog(R.string.dialog_error_invalid,
-                                        R.string.dialog_invalid_none);
+                        showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_invalid_none);
                         return;
                 }
                 if (!checkUsbDevice()) {
-                        showInvalidDialog(R.string.dialog_error_invalid,
-                                        R.string.dialog_invalid_nousb);
+                        showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_invalid_nousb);
                         return;
                 }
                 putValDcData();
@@ -189,11 +210,12 @@ public class Main extends Activity
         }
 
         public void onCancelClicked(View v) {
+                unregisterReceiver(usbPermissionReceiver);
+                finish();
         }
 
         @Override
-        public void onItemSelected(AdapterView<?> parent, View view,
-                        int position, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String s = parent.getItemAtPosition(position).toString();
                 switch (parent.getId()) {
                         case R.id.spnVendor :
@@ -212,29 +234,30 @@ public class Main extends Activity
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
-                UsbDevice usbDevice = (UsbDevice) usbListAdapter.getItem(which);
+                usbDevice = (UsbDevice) usbListAdapter.getItem(which);
                 // Check if we have permission to use the USB device.
                 if (!usbManager.hasPermission(usbDevice)) {
                         Log.d(TAG, "We don't have permission to use USB device");
-                        showInvalidDialog(R.string.dialog_error_usb,
-                                        R.string.dialog_error_usbpermission);
-                        return;
                         // Get permission for device.
+                        usbManager.requestPermission(usbDevice, usbPendingIntent);
+                        return;
                 }
+                openUsbAndImport();
+        }
+
+        private void openUsbAndImport() {
+                Log.d(TAG, "openUsbAndImport");
                 UsbDeviceConnection usbCon = usbManager.openDevice(usbDevice);
                 if (usbCon == null) {
                         // Failed to open device.
-                        Log.d(TAG,
-                                        "Failed to open the device "
-                                                        + usbDevice.toString());
+                        Log.d(TAG, "Failed to open the device " + usbDevice.toString());
                         return;
                 }
 
                 int fd = usbCon.getFileDescriptor();
                 if (fd <= 0) {
                         // Some error during opening the device. Return.
-                        showInvalidDialog(R.string.dialog_error_usb,
-                                        R.string.dialog_error_usbpermission);
+                        showInvalidDialog(R.string.dialog_error_usb, R.string.dialog_error_usbpermission);
                         return;
                 }
                 dcData.setFd(fd);
@@ -242,6 +265,7 @@ public class Main extends Activity
                 Intent i = new Intent(this, ImportProgress.class);
                 i.putExtra(DCDATA, dcData);
                 startActivity(i);
+                Log.d(TAG, "openUsbAndImport closed");
         }
 
         @Override
@@ -263,5 +287,4 @@ public class Main extends Activity
                 AlertDialog dialog = builder.create();
                 dialog.show();
         }
-
 }

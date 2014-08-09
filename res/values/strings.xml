@@ -25,6 +25,7 @@
     <string name="dialog_usb_title">Pick a USB device.</string>
     <string name="dialog_error_usbpermission">No permission to use USB device.</string>
     <string name="dialog_error_openusb">Error opening USB device.</string>
+    <string name="dialog_error_usbdenied">Denied permission to use USB device.</string>
     <string name="dummy_device_name">USB Device</string>
     <string name="dummy_device_vid">0xFFFF</string>
     <string name="dummy_device_pid">0xFFFF</string>
