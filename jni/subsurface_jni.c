@@ -97,7 +97,7 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 	jmethodID isLog = (*env)->GetMethodID(env, DcData, "isLog", "()Z");
 	jmethodID isDump = (*env)->GetMethodID(env, DcData, "isDump", "()Z");
 	jmethodID getLogfilepath = (*env)->GetMethodID(env, DcData, "getLogfilepath", "()Ljava/lang/String;");
-	jmethodID getDumpfilepath = (*env)->GetMethodID(env, DcData, "getDumpfilepath", "()Ljava/lang/String;");
+	jmethodID getOutfilepath = (*env)->GetMethodID(env, DcData, "getOutfilepath", "()Ljava/lang/String;");
 
 	jint jfd =(*env)->CallIntMethod(env, jdcdata, getFd);
 	jstring jvendor = (*env)->CallObjectMethod(env, jdcdata, getVendor);
@@ -107,7 +107,7 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 	jboolean jlog = (*env)->CallBooleanMethod(env, jdcdata, isLog);
 	jboolean jdump = (*env)->CallBooleanMethod(env, jdcdata, isDump);
 	jstring jlogfilepath = (*env)->CallObjectMethod(env, jdcdata, getLogfilepath);
-	jstring jdumpfilepath = (*env)->CallObjectMethod(env, jdcdata, getDumpfilepath);
+	jstring joutfilepath = (*env)->CallObjectMethod(env, jdcdata, getOutfilepath);
 
 	dcdata.fd = jfd;
 	dcdata.force_download = jforce;
@@ -139,12 +139,15 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 	if (jlogfilepath != NULL) {
 		const char *logfp = (*env)->GetStringUTFChars(env, jlogfilepath, NULL);
 		(*env)->ReleaseStringUTFChars(env, jlogfilepath, logfp);
+		LOGD("logfilename received : %s\n", logfp);
+		logfile_name = (char *) logfp;
 
 	}
-	if (jdumpfilepath != NULL) {
-		const char *dumpfp = (*env)->GetStringUTFChars(env, jdumpfilepath, NULL);
-		(*env)->ReleaseStringUTFChars(env, jdumpfilepath, dumpfp);
-
+	if (joutfilepath != NULL) {
+		const char *dumpfp = (*env)->GetStringUTFChars(env, joutfilepath, NULL);
+		(*env)->ReleaseStringUTFChars(env, joutfilepath, dumpfp);
+		LOGD("dumpfilename received : %s\n", dumpfp);
+		dumpfile_name = (char *) dumpfp;
 	}
 
 	LOGD("successfully finished init_dcdata");
@@ -153,17 +156,11 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 JNIEXPORT void JNICALL do_dc_import(JNIEnv *env, jobject jobj)
 {
 	LOG_F("do_dc_import");
-}
-
-JNIEXPORT void JNICALL set_log_file(JNIEnv *env, jobject jobj, jstring jlogfile)
-{
-	LOG_F("set_log_file");
-	const char *flname = (*env)->GetStringUTFChars(env, jlogfile, NULL);
-	if (flname != NULL) {
-		LOGD("logfilename received : %s\n", flname);
-		logfile_name = (char *) flname;
-		(*env)->ReleaseStringUTFChars(env, jlogfile, flname);
-	}
+	const char *error_text;
+	error_text = do_libdivecomputer_import(&dcdata);
+	if (error_text)
+		LOGD("error while import : %s\n", error_text);
+	LOGD("Finished do_dc_import\n");
 }
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
@@ -222,7 +219,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	// Register native method for getUsbPermission
 	JNINativeMethod nm3[] = {
 		{ "doDcImport",	"()Z", do_dc_import },
-		{ "setLogFile", "(Ljava/lang/String;)V", set_log_file},
 	};
 
 	if ((*env)->RegisterNatives(env, DcImportTask, nm3 , sizeof (nm3) / sizeof (nm3[0]))) {

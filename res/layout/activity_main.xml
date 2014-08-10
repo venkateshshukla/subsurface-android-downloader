@@ -25,6 +25,18 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/tv_heading_xmlfilename"
+                android:textSize="@dimen/heading3_string_size" />
+
+            <EditText
+                android:id="@+id/etXmlFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/et_default_xml" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/tv_heading_vendor"
                 android:textSize="@dimen/heading3_string_size" />
 

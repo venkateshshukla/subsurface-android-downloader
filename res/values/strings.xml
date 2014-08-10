@@ -7,6 +7,7 @@
     <string name="title_main">DC Downloader</string>
     <string name="title_import_progress">Import</string>
     <string name="title_view_file">View Log/Dives</string>
+    <string name="tv_heading_xmlfilename">Import file name</string>
     <string name="tv_heading_vendor">Vendor</string>
     <string name="tv_heading_product">Product</string>
     <string name="tv_heading_otherpref">Other preferences</string>
@@ -16,6 +17,7 @@
     <string name="cb_dump_file">Save dumpfile</string>
     <string name="et_default_logfile">default.log</string>
     <string name="et_default_dumpfile">default.bin</string>
+    <string name="et_default_xml">default.xml</string>
     <string name="b_ok">OK</string>
     <string name="b_cancel">Cancel</string>
     <string name="dialog_error_invalid">Invalid values.</string>

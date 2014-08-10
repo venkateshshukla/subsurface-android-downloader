@@ -48,6 +48,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         private CheckBox cbPrefer;
         private CheckBox cbLogfile;
         private CheckBox cbDumpfile;
+        private EditText etXmlfile;
         private EditText etLogfile;
         private EditText etDumpfile;
 
@@ -132,6 +133,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 cbPrefer = (CheckBox) findViewById(R.id.cbPrefer);
                 cbLogfile = (CheckBox) findViewById(R.id.cbLogFile);
                 cbDumpfile = (CheckBox) findViewById(R.id.cbDumpFile);
+                etXmlfile = (EditText) findViewById(R.id.etXmlFile);
                 etLogfile = (EditText) findViewById(R.id.etLogFile);
                 etDumpfile = (EditText) findViewById(R.id.etDumpFile);
         }
@@ -188,6 +190,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                                 break;
                         case R.id.cbDumpFile :
                                 etDumpfile.setEnabled(checked);
+                                etXmlfile.setEnabled(!checked);
                                 dcData.setDump(checked);
                                 break;
                 }
@@ -251,7 +254,11 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 dcData.setDump(cbDumpfile.isChecked());
                 String diveFolder = getDiveFolderName();
                 dcData.setLogfilepath(diveFolder + '/' + etLogfile.getText().toString());
-                dcData.setDumpfilepath(diveFolder + '/' + etDumpfile.getText().toString());
+                if (cbDumpfile.isChecked()) {
+                        dcData.setOutfilepath(diveFolder + '/' + etDumpfile.getText().toString());
+                } else {
+                        dcData.setOutfilepath(diveFolder + '/' + etXmlfile.getText().toString());
+                }
         }
 
         private String getDiveFolderName() {

@@ -67,7 +67,6 @@ public class ImportProgress extends Activity {
 
                 private DcData dcData;
                 private native boolean doDcImport();
-                private native void setLogFile(String fname);
 
                 public DcImportTask(DcData d) {
                         this.dcData = d;
@@ -75,14 +74,7 @@ public class ImportProgress extends Activity {
 
                 @Override
                 protected void onPreExecute() {
-                        if (dcData.isLog()) {
-                                setLogFile(dcData.getLogfilepath());
-                        }
-                        if (dcData.isDump()) {
-                                // Open dumpfile for saving dump.
-                        } else {
-                                // Open xml file for saving divelogs
-                        }
+                        // logging and dumping is decided in the native part.
                 }
 
                 @Override

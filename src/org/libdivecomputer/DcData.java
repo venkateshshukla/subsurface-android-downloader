@@ -13,7 +13,7 @@ public class DcData implements Parcelable {
         private boolean log;
         private boolean dump;
         private String logfilepath;
-        private String dumpfilepath;
+        private String outfilepath;
 
         public int getFd() {
                 return fd;
@@ -79,12 +79,12 @@ public class DcData implements Parcelable {
                 this.logfilepath = logfilepath;
         }
 
-        public String getDumpfilepath() {
-                return dumpfilepath;
+        public String getOutfilepath() {
+                return outfilepath;
         }
 
-        public void setDumpfilepath(String dumpfilepath) {
-                this.dumpfilepath = dumpfilepath;
+        public void setOutfilepath(String dumpfilepath) {
+                this.outfilepath = dumpfilepath;
         }
 
         public DcData(Context c) {
@@ -116,7 +116,7 @@ public class DcData implements Parcelable {
                 dest.writeByte((byte) (log ? 1 : 0));
                 dest.writeByte((byte) (dump ? 1 : 0));
                 dest.writeString(logfilepath);
-                dest.writeString(dumpfilepath);
+                dest.writeString(outfilepath);
         }
 
         public static final Parcelable.Creator<DcData> CREATOR = new Parcelable.Creator<DcData>() {
@@ -140,6 +140,6 @@ public class DcData implements Parcelable {
                 log = in.readByte() != 0;
                 dump = in.readByte() != 0;
                 logfilepath = in.readString();
-                dumpfilepath = in.readString();
+                outfilepath = in.readString();
         }
 }
