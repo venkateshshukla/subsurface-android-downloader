@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="50"
                     android:enabled="false"
-                    android:text="@string/tv_default_logfile"
+                    android:text="@string/et_default_logfile"
                     android:textSize="@dimen/content_string_size" />
             </LinearLayout>
 
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="50"
                     android:enabled="false"
-                    android:text="@string/tv_default_dumpfile"
+                    android:text="@string/et_default_dumpfile"
                     android:textSize="@dimen/content_string_size" />
             </LinearLayout>
         </LinearLayout>

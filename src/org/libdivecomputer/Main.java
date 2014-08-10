@@ -1,5 +1,6 @@
 package org.libdivecomputer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -144,12 +146,12 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                                         synchronized (this) {
                                                 UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                                                 if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                                                        Log.d(TAG, "Recieved a USB Device permission");
                                                         if (device != null) {
                                                                 usbDevice = device;
                                                                 openUsbAndImport();
                                                         }
                                                 } else {
+                                                        showInvalidDialog(R.string.dialog_error_usb, R.string.dialog_error_usbdenied);
                                                         Log.d(TAG, "permission denied for device " + device);
                                                 }
                                         }
@@ -192,6 +194,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_invalid_none);
                         return;
                 }
+                if (!isExternalStorageWritable()) {
+                        showInvalidDialog(R.string.dialog_error_storage, R.string.dialog_error_unwritable);
+                }
                 if (!checkUsbDevice()) {
                         showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_invalid_nousb);
                         return;
@@ -212,13 +217,35 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 return true;
         }
 
+        /* Checks if external storage is available for read and write */
+        public boolean isExternalStorageWritable() {
+                String state = Environment.getExternalStorageState();
+                if (Environment.MEDIA_MOUNTED.equals(state)) {
+                        return true;
+                }
+                return false;
+        }
+
         private void putValDcData() {
                 dcData.setPrefer(cbPrefer.isChecked());
                 dcData.setForce(cbForce.isChecked());
                 dcData.setLog(cbLogfile.isChecked());
                 dcData.setDump(cbDumpfile.isChecked());
-                dcData.setLogfilepath(etLogfile.getText().toString());
-                dcData.setDumpfilepath(etDumpfile.getText().toString());
+                String diveFolder = getDiveFolder();
+                dcData.setLogfilepath(diveFolder + '/' + etLogfile.getText().toString());
+                dcData.setDumpfilepath(diveFolder + '/' + etDumpfile.getText().toString());
+        }
+
+        private String getDiveFolder() {
+                File ext = Environment.getExternalStorageDirectory();
+                String divefolder = getDefaultFolderName();
+                return ext.getAbsolutePath() + '/' + divefolder;
+        }
+
+        private String getDefaultFolderName() {
+                // This should be done by using sharedpreferences. But for now,
+                // we are using dives folder.
+                return "Dives";
         }
 
         public void onCancelClicked(View v) {
@@ -262,6 +289,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 UsbDeviceConnection usbCon = usbManager.openDevice(usbDevice);
                 if (usbCon == null) {
                         // Failed to open device.
+                        showInvalidDialog(R.string.dialog_error_usb, R.string.dialog_error_openusb);
                         Log.d(TAG, "Failed to open the device " + usbDevice.toString());
                         return;
                 }
@@ -269,7 +297,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 int fd = usbCon.getFileDescriptor();
                 if (fd <= 0) {
                         // Some error during opening the device. Return.
-                        showInvalidDialog(R.string.dialog_error_usb, R.string.dialog_error_usbpermission);
+                        showInvalidDialog(R.string.dialog_error_usb, R.string.dialog_error_openusb);
                         return;
                 }
                 dcData.setFd(fd);

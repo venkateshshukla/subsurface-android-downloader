@@ -3,13 +3,11 @@ package org.libdivecomputer;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ImportProgress extends Activity {
         static {
@@ -41,11 +39,6 @@ public class ImportProgress extends Activity {
                 }
                 initialiseViews();
                 pbImport.setMax(PROGRESSMAX);
-                if (!isExternalStorageWritable()) {
-                        Log.d(TAG, "External storage not writable.");
-                        Toast.makeText(this, "External storage is not writable.", Toast.LENGTH_LONG).show();
-                        finish();
-                }
                 initDcData(dcData);
                 DcImportTask importTask = new DcImportTask(dcData);
                 importTask.execute();
@@ -113,12 +106,4 @@ public class ImportProgress extends Activity {
                 }
         }
 
-        /* Checks if external storage is available for read and write */
-        public boolean isExternalStorageWritable() {
-                String state = Environment.getExternalStorageState();
-                if (Environment.MEDIA_MOUNTED.equals(state)) {
-                        return true;
-                }
-                return false;
-        }
 }
