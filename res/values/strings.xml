@@ -28,6 +28,7 @@
     <string name="dialog_error_usbdenied">Denied permission to use USB device.</string>
     <string name="dialog_error_storage">Storage Error</string>
     <string name="dialog_error_unwritable">External storage not writable.</string>
+    <string name="dialog_error_folder">Unable to create folder on external storage.</string>
     <string name="dummy_device_name">USB Device</string>
     <string name="dummy_device_vid">0xFFFF</string>
     <string name="dummy_device_pid">0xFFFF</string>

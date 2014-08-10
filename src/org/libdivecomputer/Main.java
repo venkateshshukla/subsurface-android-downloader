@@ -99,7 +99,12 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
 
         @Override
         protected void onDestroy() {
-                unregisterReceiver(usbPermissionReceiver);
+                try {
+                        unregisterReceiver(usbPermissionReceiver);
+                } catch (IllegalArgumentException e) {
+                        // There is no registered reciever.
+                        Log.e(TAG, e.toString());
+                }
                 super.onDestroy();
         }
 
@@ -201,6 +206,10 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_invalid_nousb);
                         return;
                 }
+                if (!createDiveFolder()) {
+                        showInvalidDialog(R.string.dialog_error_storage, R.string.dialog_error_folder);
+                        return;
+                }
                 putValDcData();
         }
 
@@ -217,6 +226,15 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 return true;
         }
 
+        private boolean createDiveFolder() {
+                String diveFolderName = getDiveFolderName();
+                File diveFolder = new File(diveFolderName);
+                if (diveFolder.exists() && diveFolder.isDirectory()) {
+                        return true;
+                } else {
+                        return diveFolder.mkdir();
+                }
+        }
         /* Checks if external storage is available for read and write */
         public boolean isExternalStorageWritable() {
                 String state = Environment.getExternalStorageState();
@@ -231,12 +249,12 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 dcData.setForce(cbForce.isChecked());
                 dcData.setLog(cbLogfile.isChecked());
                 dcData.setDump(cbDumpfile.isChecked());
-                String diveFolder = getDiveFolder();
+                String diveFolder = getDiveFolderName();
                 dcData.setLogfilepath(diveFolder + '/' + etLogfile.getText().toString());
                 dcData.setDumpfilepath(diveFolder + '/' + etDumpfile.getText().toString());
         }
 
-        private String getDiveFolder() {
+        private String getDiveFolderName() {
                 File ext = Environment.getExternalStorageDirectory();
                 String divefolder = getDefaultFolderName();
                 return ext.getAbsolutePath() + '/' + divefolder;
