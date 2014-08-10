@@ -3,23 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    tools:context=".Main">
+    tools:context=".Main" >
+
     <ScrollView
         android:id="@+id/svMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/llOkCancel" >
+        android:layout_above="@+id/llOkCancel"
+        android:layout_alignParentTop="true" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,19 +55,19 @@
                 android:id="@+id/cbForce"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/cb_force_dives"
-                android:textSize="@dimen/content_string_size"
                 android:checked="false"
-                android:onClick="onCheckboxClicked"/>
+                android:onClick="onCheckboxClicked"
+                android:text="@string/cb_force_dives"
+                android:textSize="@dimen/content_string_size" />
 
             <CheckBox
                 android:id="@+id/cbPrefer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/cb_prefer_dives"
-                android:textSize="@dimen/content_string_size"
                 android:checked="false"
-                android:onClick="onCheckboxClicked" />
+                android:onClick="onCheckboxClicked"
+                android:text="@string/cb_prefer_dives"
+                android:textSize="@dimen/content_string_size" />
 
             <LinearLayout
                 android:id="@+id/llLogFile"
@@ -77,26 +79,28 @@
                     android:id="@+id/cbLogFile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="60"
+                    android:layout_weight="49.5"
+                    android:onClick="onCheckboxClicked"
                     android:text="@string/cb_log_file"
-                    android:textSize="@dimen/content_string_size"
-                    android:onClick="onCheckboxClicked" />
+                    android:textSize="@dimen/content_string_size" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
                     android:layout_margin="5dp"
+                    android:layout_weight="0.5"
                     android:background="#d0d0d0" />
 
-                <TextView
-                    android:id="@+id/tvLogFile"
+                <EditText
+                    android:id="@+id/etLogFile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="39.5"
+                    android:layout_weight="50"
+                    android:enabled="false"
                     android:text="@string/tv_default_logfile"
-                    android:textSize="@dimen/content_string_size"/>
+                    android:textSize="@dimen/content_string_size" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/llDumpFile"
                 android:layout_width="match_parent"
@@ -107,46 +111,51 @@
                     android:id="@+id/cbDumpFile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="60"
-                    android:text="@string/cb_dump_file"
-                    android:onClick="onCheckboxClicked" />
+                    android:layout_weight="49.5"
+                    android:onClick="onCheckboxClicked"
+                    android:text="@string/cb_dump_file" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
                     android:layout_margin="5dp"
+                    android:layout_weight="0.5"
                     android:background="#d0d0d0" />
 
-                <TextView
+                <EditText
+                    android:id="@+id/etDumpFile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="39.5"
+                    android:layout_weight="50"
+                    android:enabled="false"
                     android:text="@string/tv_default_dumpfile"
-                    android:textSize="@dimen/content_string_size"/>
+                    android:textSize="@dimen/content_string_size" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
     <LinearLayout
         android:id="@+id/llOkCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
+
         <Button
             android:id="@+id/bOK"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="@string/b_ok"
-            android:onClick="onOkClicked" />
+            android:onClick="onOkClicked"
+            android:text="@string/b_ok" />
+
         <Button
             android:id="@+id/bCancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="@string/b_cancel"
-            android:onClick="onCancelClicked" />
+            android:onClick="onCancelClicked"
+            android:text="@string/b_cancel" />
     </LinearLayout>
-</RelativeLayout>
 
+</RelativeLayout>

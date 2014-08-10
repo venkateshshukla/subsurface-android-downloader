@@ -28,8 +28,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 public class Main extends Activity implements OnItemSelectedListener, OnClickListener {
         static {
@@ -46,8 +46,8 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         private CheckBox cbPrefer;
         private CheckBox cbLogfile;
         private CheckBox cbDumpfile;
-        private TextView tvLogfile;
-        private TextView tvDumpfile;
+        private EditText etLogfile;
+        private EditText etDumpfile;
 
         private HashMap<String, ArrayList<String>> deviceMap;
         private ArrayAdapter<String> vendorAdapter;
@@ -96,6 +96,12 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         }
 
         @Override
+        protected void onDestroy() {
+                unregisterReceiver(usbPermissionReceiver);
+                super.onDestroy();
+        }
+
+        @Override
         public boolean onCreateOptionsMenu(Menu menu) {
                 getMenuInflater().inflate(R.menu.main, menu);
                 return true;
@@ -119,6 +125,8 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 cbPrefer = (CheckBox) findViewById(R.id.cbPrefer);
                 cbLogfile = (CheckBox) findViewById(R.id.cbLogFile);
                 cbDumpfile = (CheckBox) findViewById(R.id.cbDumpFile);
+                etLogfile = (EditText) findViewById(R.id.etLogFile);
+                etDumpfile = (EditText) findViewById(R.id.etDumpFile);
         }
 
         private void initialiseVars() {
@@ -168,9 +176,11 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                                 dcData.setPrefer(checked);
                                 break;
                         case R.id.cbLogFile :
+                                etLogfile.setEnabled(checked);
                                 dcData.setLog(checked);
                                 break;
                         case R.id.cbDumpFile :
+                                etDumpfile.setEnabled(checked);
                                 dcData.setDump(checked);
                                 break;
                 }
@@ -207,6 +217,8 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 dcData.setForce(cbForce.isChecked());
                 dcData.setLog(cbLogfile.isChecked());
                 dcData.setDump(cbDumpfile.isChecked());
+                dcData.setLogfilepath(etLogfile.getText().toString());
+                dcData.setDumpfilepath(etDumpfile.getText().toString());
         }
 
         public void onCancelClicked(View v) {

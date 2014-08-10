@@ -48,6 +48,7 @@ public class ImportProgress extends Activity {
                 }
                 initDcData(dcData);
                 DcImportTask importTask = new DcImportTask(dcData);
+                importTask.execute();
         }
 
         private void initialiseViews() {
@@ -65,12 +66,15 @@ public class ImportProgress extends Activity {
         public void onImportCancelClicked(MenuItem item) {
                 // Undertake steps to safely cancel import and reset to
                 // beginning
+                // Close USB device. How?? Maybe natively.
                 finish();
         }
 
-        private class DcImportTask extends AsyncTask<DcData, Integer, Boolean> {
+        private class DcImportTask extends AsyncTask<Void, Integer, Boolean> {
 
                 private DcData dcData;
+                private native boolean doDcImport();
+                private native void setLogFile(String fname);
 
                 public DcImportTask(DcData d) {
                         this.dcData = d;
@@ -79,7 +83,7 @@ public class ImportProgress extends Activity {
                 @Override
                 protected void onPreExecute() {
                         if (dcData.isLog()) {
-                                // Open logfile for saving divelogs.
+                                setLogFile(dcData.getLogfilepath());
                         }
                         if (dcData.isDump()) {
                                 // Open dumpfile for saving dump.
@@ -104,11 +108,9 @@ public class ImportProgress extends Activity {
                 }
 
                 @Override
-                protected Boolean doInBackground(DcData... params) {
-
-                        return null;
+                protected Boolean doInBackground(Void... params) {
+                        return doDcImport();
                 }
-
         }
 
         /* Checks if external storage is available for read and write */

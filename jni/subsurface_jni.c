@@ -150,6 +150,22 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 	LOGD("successfully finished init_dcdata");
 }
 
+JNIEXPORT void JNICALL do_dc_import(JNIEnv *env, jobject jobj)
+{
+	LOG_F("do_dc_import");
+}
+
+JNIEXPORT void JNICALL set_log_file(JNIEnv *env, jobject jobj, jstring jlogfile)
+{
+	LOG_F("set_log_file");
+	const char *flname = (*env)->GetStringUTFChars(env, jlogfile, NULL);
+	if (flname != NULL) {
+		LOGD("logfilename received : %s\n", flname);
+		logfile_name = (char *) flname;
+		(*env)->ReleaseStringUTFChars(env, jlogfile, flname);
+	}
+}
+
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
 	// Get JNI Env for all function calls
@@ -193,6 +209,23 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	};
 
 	if ((*env)->RegisterNatives(env, ImportProgress, nm2 , sizeof (nm2) / sizeof (nm2[0]))) {
+	     LOGD ("RegisterNatives Failed.\n");
+	     return -1;
+	}
+
+	jclass DcImportTask = (*env)->FindClass(env, "org/libdivecomputer/ImportProgress$DcImportTask");
+	if (ImportProgress == NULL) {
+		LOGD ("FindClass failed : org.libdivecomputer.ImportProgress$DcImportTask\n");
+		return -1;
+	}
+
+	// Register native method for getUsbPermission
+	JNINativeMethod nm3[] = {
+		{ "doDcImport",	"()Z", do_dc_import },
+		{ "setLogFile", "(Ljava/lang/String;)V", set_log_file},
+	};
+
+	if ((*env)->RegisterNatives(env, DcImportTask, nm3 , sizeof (nm3) / sizeof (nm3[0]))) {
 	     LOGD ("RegisterNatives Failed.\n");
 	     return -1;
 	}
