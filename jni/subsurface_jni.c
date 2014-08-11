@@ -136,18 +136,20 @@ JNIEXPORT void JNICALL init_dcdata(JNIEnv *env, jobject jobj, jobject jdcdata)
 
 	device_descriptor_lookup(&dcdata);
 
-	if (jlogfilepath != NULL) {
+	if (jlog && jlogfilepath != NULL) {
 		const char *logfp = (*env)->GetStringUTFChars(env, jlogfilepath, NULL);
+		char *lfp = (char *) malloc(PATHSIZE);
+		strncpy(lfp, logfp, PATHSIZE);
 		(*env)->ReleaseStringUTFChars(env, jlogfilepath, logfp);
-		LOGD("logfilename received : %s\n", logfp);
-		logfile_name = (char *) logfp;
+		logfile_name = lfp;
 
 	}
 	if (joutfilepath != NULL) {
 		const char *dumpfp = (*env)->GetStringUTFChars(env, joutfilepath, NULL);
+		char *ofp = (char *) malloc(PATHSIZE);
+		strncpy(ofp, dumpfp, PATHSIZE);
 		(*env)->ReleaseStringUTFChars(env, joutfilepath, dumpfp);
-		LOGD("dumpfilename received : %s\n", dumpfp);
-		dumpfile_name = (char *) dumpfp;
+		dumpfile_name = ofp;
 	}
 
 	LOGD("successfully finished init_dcdata");

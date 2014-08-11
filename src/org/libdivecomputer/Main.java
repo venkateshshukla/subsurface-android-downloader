@@ -253,8 +253,12 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 dcData.setLog(cbLogfile.isChecked());
                 dcData.setDump(cbDumpfile.isChecked());
                 String diveFolder = getDiveFolderName();
-                dcData.setLogfilepath(diveFolder + '/' + etLogfile.getText().toString());
-                if (cbDumpfile.isChecked()) {
+                if (dcData.isLog()) {
+                        dcData.setLogfilepath(diveFolder + '/' + etLogfile.getText().toString());
+                } else {
+                        dcData.setLogfilepath(null);
+                }
+                if (dcData.isDump()) {
                         dcData.setOutfilepath(diveFolder + '/' + etDumpfile.getText().toString());
                 } else {
                         dcData.setOutfilepath(diveFolder + '/' + etXmlfile.getText().toString());
