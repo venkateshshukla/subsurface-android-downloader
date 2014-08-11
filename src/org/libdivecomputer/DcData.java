@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 public class DcData implements Parcelable {
         static {
-                System.loadLibrary("libdivecomputer_jni");
+                System.loadLibrary("subsurface_jni");
         }
 
         private int fd;
@@ -37,6 +37,7 @@ public class DcData implements Parcelable {
         public void nativeResetDcData() {
                 resetDcData();
         }
+
         public void nativeSetUsbFd(int usbFd) throws DcException {
                 int ret = setUsbFd(this.fd);
                 if (ret == -1)
@@ -87,7 +88,6 @@ public class DcData implements Parcelable {
                         case -2 :
                                 throw new DcException("Null Filename");
                 }
-
         }
 
         public void nativeSetDumpFile(String flname) throws DcException {
@@ -98,7 +98,6 @@ public class DcData implements Parcelable {
                         case -2 :
                                 throw new DcException("Null Filename");
                 }
-
         }
 
         public void nativeSetXmlFile(String flname) throws DcException {
@@ -130,7 +129,10 @@ public class DcData implements Parcelable {
                 return fd;
         }
 
-        public void setFd(int fd) {
+        public void setFd(int fd) throws DcException {
+                if (fd <= 0) {
+                        throw new DcException("Usb File Descriptor is invalid.");
+                }
                 this.fd = fd;
         }
 
@@ -138,15 +140,22 @@ public class DcData implements Parcelable {
                 return vendor;
         }
 
-        public void setVendor(String vendor) {
+        public void setVendor(String vendor) throws DcException {
+                // This should never happen
+                if (vendor.equals(null) || vendor.isEmpty()) {
+                        throw new DcException("Empty vendor string is not allowed.");
+                }
                 this.vendor = vendor;
         }
-
         public String getProduct() {
                 return product;
         }
 
-        public void setProduct(String product) {
+        public void setProduct(String product) throws DcException {
+                // This should never happen
+                if (product.equals(null) || product.isEmpty()) {
+                        throw new DcException("Empty product string is not allowed.");
+                }
                 this.product = product;
         }
 
@@ -186,7 +195,10 @@ public class DcData implements Parcelable {
                 return logfilepath;
         }
 
-        public void setLogfilepath(String logfilepath) {
+        public void setLogfilepath(String logfilepath) throws DcException {
+                if (logfilepath.equals(null) || logfilepath.isEmpty()) {
+                        throw new DcException("Empty logfile string.");
+                }
                 this.logfilepath = logfilepath;
         }
 
@@ -194,7 +206,10 @@ public class DcData implements Parcelable {
                 return outfilepath;
         }
 
-        public void setOutfilepath(String dumpfilepath) {
+        public void setOutfilepath(String dumpfilepath) throws DcException {
+                if (dumpfilepath.equals(null) || dumpfilepath.isEmpty()) {
+                        throw new DcException("Empty output file string.");
+                }
                 this.outfilepath = dumpfilepath;
         }
 
