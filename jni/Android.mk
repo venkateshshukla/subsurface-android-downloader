@@ -26,6 +26,7 @@ LOCAL_MODULE    := universal
 LOCAL_SRC_FILES := utils.c common.c universal.c
 LOCAL_C_INCLUDES := $(INCLUDE_PATH)
 LOCAL_CFLAGS += -std=gnu99
+LOCAL_LDFLAGS := -llog
 LOCAL_WHOLE_STATIC_LIBRARIES := usb ftdi divecomputer
 include $(BUILD_STATIC_LIBRARY)
 

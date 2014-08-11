@@ -28,6 +28,10 @@
 
 #include "utils.h"
 
+#include <android/log.h>
+
+#define LOG_TAG "utils.c"
+
 static FILE* g_logfile = NULL;
 
 static unsigned char g_lastchar = '\n';
@@ -73,7 +77,7 @@ int message (const char* fmt, ...)
 	}
 
 	va_start (ap, fmt);
-	int rc = vfprintf (stderr, fmt, ap);
+	int rc = __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, fmt, ap);
 	va_end (ap);
 
 	return rc;

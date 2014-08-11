@@ -494,52 +494,6 @@ dive_cb (const unsigned char *data, unsigned int size, const unsigned char *fing
 	return 1;
 }
 
-
-static void
-usage (const char *filename)
-{
-#ifndef _MSC_VER
-	fprintf (stderr, "Usage:\n\n");
-	fprintf (stderr, "   %s [options] devname\n\n", filename);
-	fprintf (stderr, "Options:\n\n");
-	fprintf (stderr, "   -n name        Set device name (required).\n");
-	fprintf (stderr, "   -b name        Set backend name (required).\n");
-	fprintf (stderr, "   -t model       Set model code.\n");
-	fprintf (stderr, "   -f hexdata     Set fingerprint data.\n");
-	fprintf (stderr, "   -l logfile     Set logfile.\n");
-	fprintf (stderr, "   -d filename    Download dives.\n");
-	fprintf (stderr, "   -m filename    Download memory dump.\n");
-	fprintf (stderr, "   -c cachedir    Set cache directory.\n");
-	fprintf (stderr, "   -h             Show this help message.\n\n");
-#else
-	fprintf (stderr, "Usage:\n\n");
-	fprintf (stderr, "   %s backend devname\n\n", filename);
-#endif
-
-	fprintf (stderr, "Supported backends:\n\n");
-	unsigned int nbackends = sizeof (g_backends) / sizeof (g_backends[0]);
-	for (unsigned int i = 0; i < nbackends; ++i) {
-		fprintf (stderr, "%s", g_backends[i].name);
-		if (i != nbackends - 1)
-			fprintf (stderr, ", ");
-		else
-			fprintf (stderr, "\n\n");
-	}
-
-	fprintf (stderr, "Supported devices:\n\n");
-	dc_iterator_t *iterator = NULL;
-	dc_descriptor_t *descriptor = NULL;
-	dc_descriptor_iterator (&iterator);
-	while (dc_iterator_next (iterator, &descriptor) == DC_STATUS_SUCCESS) {
-		fprintf (stderr, "   %s %s\n",
-			dc_descriptor_get_vendor (descriptor),
-			dc_descriptor_get_product (descriptor));
-		dc_descriptor_free (descriptor);
-	}
-	dc_iterator_free (iterator);
-}
-
-
 dc_status_t
 search (dc_descriptor_t **out, const char *name, dc_family_t backend, unsigned int model)
 {
