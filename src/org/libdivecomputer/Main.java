@@ -35,7 +35,7 @@ import android.widget.Spinner;
 
 public class Main extends Activity implements OnItemSelectedListener, OnClickListener {
         static {
-                System.loadLibrary("libdivecomputer_jni");
+                System.loadLibrary("divecomputer_jni");
         }
 
         private native void getDeviceMap(HashMap<String, ArrayList<String>> hm);
@@ -220,8 +220,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.dialog_error_storage, R.string.dialog_error_folder);
                         return;
                 }
-                showUsbListDialog();
-                insertValues();
+		if (insertValues()) {
+	                showUsbListDialog();
+		}
         }
 
         private boolean noUsbDevice() {
@@ -264,7 +265,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 return "Dives";
         }
 
-        private void insertValues() {
+        private boolean insertValues() {
                 boolean frc = cbForce.isChecked();
                 boolean prf = cbPrefer.isChecked();
                 boolean log = cbLogfile.isChecked();
@@ -273,9 +274,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 String df = etDumpfile.getText().toString();
                 String xf = etXmlfile.getText().toString();
 
-                if ((log && (lf.equals(null) || lf.isEmpty())) || (dmp && (df.equals(null) || df.isEmpty())) || (!dmp && (xf.equals(null) || xf.isEmpty()))) {
+                if ((log && (lf == null || lf.isEmpty())) || (dmp && (df == null || df.isEmpty())) || (!dmp && (xf == null || xf.isEmpty()))) {
                         showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_error_empty);
-                        return;
+                        return false;
                 }
 
                 dcData.setPrefer(prf);
@@ -295,7 +296,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         }
                 } catch (DcException e) {
                         showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
+			return false;
                 }
+		return true;
         }
         public void onCancelClicked(View v) {
                 finish();

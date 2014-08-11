@@ -259,7 +259,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 		{ "setDumpFile", "(Ljava/lang/String;)I", set_dumpfile },
 		{ "setXmlFile",	"(Ljava/lang/String;)I", set_xmlfile },
 		{ "initDcContext", "()I", init_dc_context },
-		{ "initDcDescriptor", "(Ljava/lang/String;Ljava/lang/String;)", init_dc_descriptor },
+		{ "initDcDescriptor", "(Ljava/lang/String;Ljava/lang/String;)I", init_dc_descriptor },
 		{ "interruptImport", "()I", interrupt_import },
 		{ "startImport", "()I", start_import },
 	};

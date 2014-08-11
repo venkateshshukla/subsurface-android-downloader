@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 public class DcData implements Parcelable {
         static {
-                System.loadLibrary("libdivecomputer_jni");
+                System.loadLibrary("divecomputer_jni");
         }
 
         private int fd;
@@ -127,7 +127,7 @@ public class DcData implements Parcelable {
 
         public void setVendor(String vendor) throws DcException {
                 // This should never happen
-                if (vendor.equals(null) || vendor.isEmpty()) {
+                if (vendor == null || vendor.isEmpty()) {
                         throw new DcException(R.string.dcdata_empty_vendor);
                 }
                 this.vendor = vendor;
@@ -138,7 +138,7 @@ public class DcData implements Parcelable {
 
         public void setProduct(String product) throws DcException {
                 // This should never happen
-                if (product.equals(null) || product.isEmpty()) {
+                if (product == null || product.isEmpty()) {
                         throw new DcException(R.string.dcdata_empty_product);
                 }
                 this.product = product;
@@ -181,7 +181,7 @@ public class DcData implements Parcelable {
         }
 
         public void setLogfilepath(String logfilepath) throws DcException {
-                if (logfilepath.equals(null) || logfilepath.isEmpty()) {
+                if (logfilepath == null || logfilepath.isEmpty()) {
                         throw new DcException(R.string.dcdata_empty_logfile);
                 }
                 this.logfilepath = logfilepath;
@@ -192,17 +192,17 @@ public class DcData implements Parcelable {
         }
 
         public void setOutfilepath(String dumpfilepath) throws DcException {
-                if (dumpfilepath.equals(null) || dumpfilepath.isEmpty()) {
+                if (dumpfilepath == null || dumpfilepath.isEmpty()) {
                         throw new DcException(R.string.dcdata_empty_outfile);
                 }
                 this.outfilepath = dumpfilepath;
         }
 
         public void validateData() throws DcException {
-                if (log && (logfilepath.equals(null) || logfilepath.isEmpty())) {
+                if (log && (logfilepath == null || logfilepath.isEmpty())) {
                         throw new DcException(R.string.dcdata_error_logfile);
                 }
-                if (outfilepath.equals(null) || outfilepath.isEmpty()) {
+                if (outfilepath == null || outfilepath.isEmpty()) {
                         if (dump) {
                                 throw new DcException(R.string.dcdata_error_dumpfile);
                         } else {
@@ -210,10 +210,10 @@ public class DcData implements Parcelable {
                         }
                 }
                 // This should never happen.
-                if (vendor.equals(null) || vendor.isEmpty()) {
+                if (vendor == null || vendor.isEmpty()) {
                         throw new DcException(R.string.dcdata_empty_vendor);
                 }
-                if (product.equals(null) || product.isEmpty()) {
+                if (product == null || product.isEmpty()) {
                         throw new DcException(R.string.dcdata_empty_product);
                 }
                 if (fd <= 0) {
