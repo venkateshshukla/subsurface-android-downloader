@@ -346,9 +346,6 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 }
                 dcData.setFd(fd);
 
-                Intent i = new Intent(this, ImportProgress.class);
-                i.putExtra(DCDATA, dcData);
-                startActivity(i);
                 Log.d(TAG, "openUsbAndImport closed");
         }
 

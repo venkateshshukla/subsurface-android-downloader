@@ -278,18 +278,18 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 	JNINativeMethod nm2[] = {
 		{ "resetDcData", "()V", reset_dc_data },
 		{ "setUsbFd", "(I)I", set_usb_fd},
-		{ "setPrefer", "(Z)V", set_prefer},
-		{ "setForce", "(Z)V", set_force},
-		{ "setLog", "(Z)V", set_log},
-                { "setDump", "(Z)V", set_dump},
-                { "setVendorName", "(Ljava/lang/String;)I", set_vendor_name},
-                { "setProductName", "(Ljava/lang/String;)I", set_product_name},
+		{ "setDcPrefer", "(Z)V", set_prefer},
+		{ "setDcForce", "(Z)V", set_force},
+		{ "setDcLog", "(Z)V", set_log},
+		{ "setDcDump", "(Z)V", set_dump},
+		{ "setVendorName", "(Ljava/lang/String;)I", set_vendor_name},
+		{ "setProductName", "(Ljava/lang/String;)I", set_product_name},
 		{ "setLogFile",	"(Ljava/lang/String;)I", set_log_file },
 		{ "setDumpFile", "(Ljava/lang/String;)I", set_dump_file },
 		{ "setXmlFile",	"(Ljava/lang/String;)I", set_xml_file },
 		{ "doDcImport", "()V", do_dc_import },
 		{ "doProcessDives", "()V", do_process_dives },
-		{ "doSaveDives", "()V", do_save_dives },
+		{ "doSaveDives", "()I", do_save_dives },
 	};
 
 	if ((*env)->RegisterNatives(env, DcData, nm2 , sizeof (nm2) / sizeof (nm2[0]))) {

@@ -5,6 +5,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class DcData implements Parcelable {
+        static {
+                System.loadLibrary("libdivecomputer_jni");
+        }
+
         private int fd;
         private String vendor;
         private String product;
@@ -14,6 +18,113 @@ public class DcData implements Parcelable {
         private boolean dump;
         private String logfilepath;
         private String outfilepath;
+
+        private native void resetDcData();
+        private native int setUsbFd(int usbFd);
+        private native void setDcPrefer(boolean p);
+        private native void setDcForce(boolean f);
+        private native void setDcLog(boolean l);
+        private native void setDcDump(boolean d);
+        private native int setVendorName(String v);
+        private native int setProductName(String p);
+        private native int setLogFile(String flname);
+        private native int setDumpFile(String flname);
+        private native int setXmlFile(String flname);
+        private native void doDcImport();
+        private native void doProcessDives();
+        private native int doSaveDives();
+
+        public void nativeResetDcData() {
+                resetDcData();
+        }
+        public void nativeSetUsbFd(int usbFd) throws DcException {
+                int ret = setUsbFd(this.fd);
+                if (ret == -1)
+                        throw new DcException("Invalid USB file descriptor.");
+        }
+
+        public void nativeSetDcPrefer(boolean p) {
+                setDcPrefer(this.prefer);
+        }
+
+        public void nativeSetDcForce(boolean f) {
+                setDcForce(this.force);
+        }
+
+        public void nativeSetDcLog(boolean l) {
+                setDcForce(this.log);
+        }
+
+        public void nativeSetDcDump(boolean d) {
+                setDcDump(this.dump);
+        }
+
+        public void nativeSetVendorName(String v) throws DcException{
+            int ret = setVendorName(this.vendor);
+            switch (ret) {
+                    case -1 :
+                            throw new DcException("Memory error");
+                    case -2 :
+                            throw new DcException("Null Filename");
+            }
+        }
+
+        public void nativeSetProductName(String p) throws DcException{
+            int ret = setProductName(this.product);
+            switch (ret) {
+                    case -1 :
+                            throw new DcException("Memory error");
+                    case -2 :
+                            throw new DcException("Null Filename");
+            }
+        }
+
+        public void nativeSetLogFile(String flname) throws DcException {
+                int ret = setLogFile(this.logfilepath);
+                switch (ret) {
+                        case -1 :
+                                throw new DcException("Memory error");
+                        case -2 :
+                                throw new DcException("Null Filename");
+                }
+
+        }
+
+        public void nativeSetDumpFile(String flname) throws DcException {
+                int ret = setDumpFile(this.outfilepath);
+                switch (ret) {
+                        case -1 :
+                                throw new DcException("Memory error");
+                        case -2 :
+                                throw new DcException("Null Filename");
+                }
+
+        }
+
+        public void nativeSetXmlFile(String flname) throws DcException {
+                int ret = setXmlFile(this.outfilepath);
+                switch (ret) {
+                        case -1 :
+                                throw new DcException("Memory error");
+                        case -2 :
+                                throw new DcException("Null Filename");
+                }
+        }
+
+        public void nativeDoDcImport() {
+                doDcImport();
+        }
+
+        public void nativeDoProcessDives() {
+                doProcessDives();
+        }
+
+        public void nativeDoSaveDives() throws DcException {
+                int ret = doSaveDives();
+                if (ret != 0) {
+                        throw new DcException("Error saving the dives.");
+                }
+        }
 
         public int getFd() {
                 return fd;
@@ -97,7 +208,7 @@ public class DcData implements Parcelable {
                 this.dump = false;
                 this.log = false;
                 this.logfilepath = null;
-                this.logfilepath = null;
+                this.outfilepath = null;
         }
 
         @Override
