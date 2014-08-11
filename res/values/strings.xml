@@ -20,7 +20,9 @@
     <string name="et_default_xml">default.xml</string>
     <string name="b_ok">OK</string>
     <string name="b_cancel">Cancel</string>
+    <string name="error">Error !!</string>
     <string name="dialog_error_invalid">Invalid values.</string>
+    <string name="dialog_error_empty">Empty strings are not allowed.</string>
     <string name="dialog_error_usb">USB Error.</string>
     <string name="dialog_invalid_none">Select at least one option.</string>
     <string name="dialog_invalid_nousb">No USB device is attached.</string>
@@ -34,5 +36,19 @@
     <string name="dummy_device_name">USB Device</string>
     <string name="dummy_device_vid">0xFFFF</string>
     <string name="dummy_device_pid">0xFFFF</string>
+    <string name="dcdata_invalid_usb">Invalid USB file descriptor.</string>
+    <string name="dcdata_error_memory">Memory error.</string>
+    <string name="dcdata_null_file">Null filename</string>
+    <string name="dcdata_dc_ctx">Error initializing libdivecomputer context.</string>
+    <string name="dcdata_dc_desc">No device found with given information.</string>
+    <string name="dcdata_error_interrupt">Error interrupting import.</string>
+    <string name="dcdata_error_import">Error importing from divecomputer.</string>
+    <string name="dcdata_empty_vendor">Vendor string is empty.</string>
+    <string name="dcdata_empty_product">Product string is empty.</string>
+    <string name="dcdata_empty_logfile">Log filename string is empty..</string>
+    <string name="dcdata_empty_outfile">Xml/dump filename string is empty.</string>
+    <string name="dcdata_error_logfile">Logging enabled and logfile name not provided.</string>
+    <string name="dcdata_error_dumpfile">Dump is enabled and dumpfile name not provided.</string>
+    <string name="dcdata_error_xmlfile">Dive download enabled and xmlfile name not provided.</string>
 
 </resources>

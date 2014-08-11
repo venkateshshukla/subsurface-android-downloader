@@ -75,6 +75,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_main);
+
                 initialiseVars();
                 initialiseViews();
                 addListeners();
@@ -194,33 +195,24 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 boolean checked = ((CheckBox) v).isChecked();
                 switch (v.getId()) {
                         case R.id.cbForce :
-                                dcData.setForce(checked);
                                 break;
                         case R.id.cbPrefer :
-                                dcData.setPrefer(checked);
                                 break;
                         case R.id.cbLogFile :
                                 etLogfile.setEnabled(checked);
-                                dcData.setLog(checked);
                                 break;
                         case R.id.cbDumpFile :
                                 etDumpfile.setEnabled(checked);
                                 etXmlfile.setEnabled(!checked);
-                                dcData.setDump(checked);
                                 break;
                 }
-
         }
 
         public void onOkClicked(View v) {
-                if (dcData.getVendor() == null || dcData.getProduct() == null) {
-                        showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_invalid_none);
-                        return;
-                }
                 if (!isExternalStorageWritable()) {
                         showInvalidDialog(R.string.dialog_error_storage, R.string.dialog_error_unwritable);
                 }
-                if (!checkUsbDevice()) {
+                if (noUsbDevice()) {
                         showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_invalid_nousb);
                         return;
                 }
@@ -228,20 +220,17 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.dialog_error_storage, R.string.dialog_error_folder);
                         return;
                 }
-                putValDcData();
+                showUsbListDialog();
+                insertValues();
         }
 
-        private boolean checkUsbDevice() {
+        private boolean noUsbDevice() {
                 usbDeviceMap = usbManager.getDeviceList();
                 if (usbDeviceMap.size() == 0) {
                         Log.d(TAG, "No USB device is attached.");
-                        return false;
+                        return true;
                 }
-                ArrayList<UsbDevice> al = new ArrayList<UsbDevice>();
-                al.addAll(usbDeviceMap.values());
-                usbListAdapter.setUsbList(al);
-                showUsbListDialog();
-                return true;
+                return false;
         }
 
         private boolean createDiveFolder() {
@@ -253,6 +242,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         return diveFolder.mkdir();
                 }
         }
+
         /* Checks if external storage is available for read and write */
         public boolean isExternalStorageWritable() {
                 String state = Environment.getExternalStorageState();
@@ -260,24 +250,6 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         return true;
                 }
                 return false;
-        }
-
-        private void putValDcData() {
-                dcData.setPrefer(cbPrefer.isChecked());
-                dcData.setForce(cbForce.isChecked());
-                dcData.setLog(cbLogfile.isChecked());
-                dcData.setDump(cbDumpfile.isChecked());
-                String diveFolder = getDiveFolderName();
-                if (dcData.isLog()) {
-                        dcData.setLogfilepath(diveFolder + '/' + etLogfile.getText().toString());
-                } else {
-                        dcData.setLogfilepath(null);
-                }
-                if (dcData.isDump()) {
-                        dcData.setOutfilepath(diveFolder + '/' + etDumpfile.getText().toString());
-                } else {
-                        dcData.setOutfilepath(diveFolder + '/' + etXmlfile.getText().toString());
-                }
         }
 
         private String getDiveFolderName() {
@@ -292,25 +264,61 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 return "Dives";
         }
 
+        private void insertValues() {
+                boolean frc = cbForce.isChecked();
+                boolean prf = cbPrefer.isChecked();
+                boolean log = cbLogfile.isChecked();
+                boolean dmp = cbDumpfile.isChecked();
+                String lf = etLogfile.getText().toString();
+                String df = etDumpfile.getText().toString();
+                String xf = etXmlfile.getText().toString();
+
+                if ((log && (lf.equals(null) || lf.isEmpty())) || (dmp && (df.equals(null) || df.isEmpty())) || (!dmp && (xf.equals(null) || xf.isEmpty()))) {
+                        showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_error_empty);
+                        return;
+                }
+
+                dcData.setPrefer(prf);
+                dcData.setForce(frc);
+                dcData.setLog(log);
+                dcData.setDump(dmp);
+
+                String diveFolder = getDiveFolderName();
+                try {
+                        if (log) {
+                                dcData.setLogfilepath(diveFolder + '/' + lf);
+                        }
+                        if (dmp) {
+                                dcData.setOutfilepath(diveFolder + '/' + df);
+                        } else {
+                                dcData.setOutfilepath(diveFolder + '/' + xf);
+                        }
+                } catch (DcException e) {
+                        showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
+                }
+        }
         public void onCancelClicked(View v) {
-                unregisterReceiver(usbPermissionReceiver);
                 finish();
         }
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String s = parent.getItemAtPosition(position).toString();
-                switch (parent.getId()) {
-                        case R.id.spnVendor :
-                                productList = deviceMap.get(s);
-                                Collections.sort(productList);
-                                productAdapter.clear();
-                                productAdapter.addAll(productList);
-                                dcData.setVendor(s);
-                                break;
-                        case R.id.spnProduct :
-                                dcData.setProduct(s);
-                                break;
+                try {
+                        switch (parent.getId()) {
+                                case R.id.spnVendor :
+                                        productList = deviceMap.get(s);
+                                        Collections.sort(productList);
+                                        productAdapter.clear();
+                                        productAdapter.addAll(productList);
+                                        dcData.setVendor(s);
+                                        break;
+                                case R.id.spnProduct :
+                                        dcData.setProduct(s);
+                                        break;
+                        }
+                } catch (DcException e) {
+                        showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
                 }
 
         }
@@ -344,7 +352,13 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.dialog_error_usb, R.string.dialog_error_openusb);
                         return;
                 }
-                dcData.setFd(fd);
+
+                try {
+                        dcData.setFd(fd);
+                        dcData.validateData();
+                } catch (DcException e) {
+                        showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
+                }
 
                 Log.d(TAG, "openUsbAndImport closed");
         }
@@ -362,6 +376,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         }
 
         private void showUsbListDialog() {
+                ArrayList<UsbDevice> al = new ArrayList<UsbDevice>();
+                al.addAll(usbDeviceMap.values());
+                usbListAdapter.setUsbList(al);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.dialog_usb_title);
                 builder.setAdapter(usbListAdapter, this);
