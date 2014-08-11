@@ -99,6 +99,12 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         }
 
         @Override
+        protected void onResume() {
+                refreshViews();
+                super.onResume();
+        }
+
+        @Override
         protected void onDestroy() {
                 try {
                         unregisterReceiver(usbPermissionReceiver);
@@ -136,6 +142,15 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 etXmlfile = (EditText) findViewById(R.id.etXmlFile);
                 etLogfile = (EditText) findViewById(R.id.etLogFile);
                 etDumpfile = (EditText) findViewById(R.id.etDumpFile);
+        }
+
+        private void refreshViews() {
+                boolean checked;
+                checked = cbLogfile.isChecked();
+                etLogfile.setEnabled(checked);
+                checked = cbDumpfile.isChecked();
+                etDumpfile.setEnabled(checked);
+                etXmlfile.setEnabled(!checked);
         }
 
         private void initialiseVars() {
