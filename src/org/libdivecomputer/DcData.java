@@ -19,6 +19,19 @@ public class DcData implements Parcelable {
         private String logfilepath;
         private String outfilepath;
 
+        public DcData(Context c) {
+                super();
+                this.fd = -1;
+                this.vendor = null;
+                this.product = null;
+                this.force = false;
+                this.prefer = false;
+                this.dump = false;
+                this.log = false;
+                this.logfilepath = null;
+                this.outfilepath = null;
+        }
+
         private native void resetDcData();
         private native int setUsbFd(int usbFd);
         private native void setDcPrefer(boolean p);
@@ -213,19 +226,28 @@ public class DcData implements Parcelable {
                 this.outfilepath = dumpfilepath;
         }
 
-        public DcData(Context c) {
-                super();
-                this.fd = -1;
-                this.vendor = null;
-                this.product = null;
-                this.force = false;
-                this.prefer = false;
-                this.dump = false;
-                this.log = false;
-                this.logfilepath = null;
-                this.outfilepath = null;
+        public void validateData() throws DcException {
+                if (log && (logfilepath.equals(null) || logfilepath.isEmpty())) {
+                        throw new DcException("Logging enabled and logfile name not provided.");
+                }
+                if (outfilepath.equals(null) || outfilepath.isEmpty()) {
+                        if (dump) {
+                                throw new DcException("Dump is enabled and dumpfile name not provided.");
+                        } else {
+                                throw new DcException("Dive download enabled and xmlfile name not provided.");
+                        }
+                }
+                // This should never happen.
+                if (vendor.equals(null) || vendor.isEmpty()) {
+                        throw new DcException("Vendor name is empty.");
+                }
+                if (product.equals(null) || product.isEmpty()) {
+                        throw new DcException("Product name is empty.");
+                }
+                if (fd <= 0) {
+                        throw new DcException("Usb device is not opened properly.");
+                }
         }
-
         @Override
         public int describeContents() {
                 // TODO Auto-generated method stub
