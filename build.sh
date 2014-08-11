@@ -36,7 +36,7 @@ export AR=${BUILDCHAIN}-ar
 
 # Download libdivecomputer, libusb and libftdi submodule
 if [ ! -e libdivecomputer/configure.ac ] || [ ! -e libusb/configure.ac ] \
-	|| [ ! -e libftdi/CMakeLists.txt ] || [ ! -e subsurface/subsurface.pro ] ; then
+	|| [ ! -e libftdi/CMakeLists.txt ] ; then
 	git submodule init
 	git submodule update
 fi
@@ -45,117 +45,6 @@ fi
 mkdir -vp build
 
 pushd build
-
-if [ ! -e sqlite-autoconf-3080200.tar.gz ] ; then
-	wget http://www.sqlite.org/2013/sqlite-autoconf-3080200.tar.gz
-fi
-if [ ! -e sqlite-autoconf-3080200 ] ; then
-	tar -zxf sqlite-autoconf-3080200.tar.gz
-fi
-if [ ! -e $PKG_CONFIG_PATH/sqlite3.pc ] ; then
-	mkdir -p sqlite-build-$ARCH
-	pushd sqlite-build-$ARCH
-	../sqlite-autoconf-3080200/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --enable-static --disable-shared
-	make -j8
-	make install
-	popd
-fi
-
-if [ ! -e libxml2-2.9.1.tar.gz ] ; then
-	wget ftp://xmlsoft.org/libxml2/libxml2-2.9.1.tar.gz
-fi
-if [ ! -e libxml2-2.9.1 ] ; then
-	tar -zxf libxml2-2.9.1.tar.gz
-fi
-if [ ! -e $PKG_CONFIG_PATH/libxml-2.0.pc ] ; then
-	mkdir -p libxml2-build-$ARCH
-	pushd libxml2-build-$ARCH
-	../libxml2-2.9.1/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --without-python --without-iconv --enable-static --disable-shared
-	perl -pi -e 's/runtest\$\(EXEEXT\)//' Makefile
-	perl -pi -e 's/testrecurse\$\(EXEEXT\)//' Makefile
-	make -j8
-	make install
-	popd
-fi
-
-if [ ! -e libxslt-1.1.28.tar.gz ] ; then
-	wget ftp://xmlsoft.org/libxml2/libxslt-1.1.28.tar.gz
-fi
-if [ ! -e libxslt-1.1.28 ] ; then
-	tar -zxf libxslt-1.1.28.tar.gz
-	cp libxml2-2.9.1/config.sub libxslt-1.1.28
-fi
-if [ ! -e $PKG_CONFIG_PATH/libxslt.pc ] ; then
-	mkdir -p libxslt-build-$ARCH
-	pushd libxslt-build-$ARCH
-	../libxslt-1.1.28/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --with-libxml-prefix=${PREFIX} --without-python --without-crypto --enable-static --disable-shared
-	make
-	make install
-	popd
-fi
-
-# libz.a not available in android arm ? We shall cross compile it.
-if [ ! -e zlib-1.2.8.tar.gz ] ; then
-	wget http://cznic.dl.sourceforge.net/project/libpng/zlib/1.2.8/zlib-1.2.8.tar.gz
-fi
-if [ ! -e zlib-1.2.8 ] ; then
-	tar -zxf zlib-1.2.8.tar.gz
-fi
-if [ ! -e $PKG_CONFIG_PATH/zlib.pc ] ; then
-	pushd zlib-1.2.8
-	./configure --prefix=${PREFIX}
-	make
-	make install
-	popd
-fi
-
-if [ ! -e libzip-0.11.2.tar.gz ] ; then
-	wget http://www.nih.at/libzip/libzip-0.11.2.tar.gz
-fi
-if [ ! -e libzip-0.11.2 ] ; then
-	tar -zxf libzip-0.11.2.tar.gz
-fi
-if [ ! -e $PKG_CONFIG_PATH/libzip.pc ] ; then
-	mkdir -p libzip-build-$ARCH
-	pushd libzip-build-$ARCH
-	../libzip-0.11.2/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --enable-static --disable-shared
-	make
-	make install
-	popd
-fi
-
-if [ ! -e libgit2-0.20.0.tar.gz ] ; then
-	wget -O libgit2-0.20.0.tar.gz https://github.com/libgit2/libgit2/archive/v0.20.0.tar.gz
-fi
-if [ ! -e libgit2-0.20.0 ] ; then
-	tar -zxf libgit2-0.20.0.tar.gz
-fi
-if [ ! -e $PKG_CONFIG_PATH/libgit2.pc ] ; then
-	mkdir -p libgit2-build-$ARCH
-	pushd libgit2-build-$ARCH
-	# -DCMAKE_CXX_COMPILER=arm-linux-androideabi-g++
-	cmake -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_VERSION=Android -DCMAKE_C_COMPILER=${CC} -DCMAKE_FIND_ROOT_PATH=${PREFIX} -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY -DANDROID=ON -DSHA1_TYPE=builtin -DBUILD_CLAR=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=${PREFIX} ../libgit2-0.20.0/
-	make
-	make install
-	popd
-fi
-
-if [ ! -e libexif-0.6.21.tar.bz2 ] ; then
-	wget http://kaz.dl.sourceforge.net/project/libexif/libexif/0.6.21/libexif-0.6.21.tar.bz2
-fi
-if [ ! -e libexif-0.6.21 ] ; then
-	tar -xvf libexif-0.6.21.tar.bz2
-fi
-if [ ! -e $PKG_CONFIG_PATH/libexif.pc ] ; then
-	mkdir -p libexif-build-$ARCH
-	pushd libexif-build-$ARCH
-	../libexif-0.6.21/configure  --host=i686-unknown-linux-gnu --prefix=${PREFIX} --enable-static --disable-shared
-	make
-	make install
-	popd
-fi
-
-popd
 
 # Build libusb
 if [ ! -e libusb/configure ] ; then
@@ -197,12 +86,6 @@ if [ ! -e Makefile ] ; then
 fi
 make
 make install
-popd
-
-# Make ssrf-version.h file for subsurface
-pushd subsurface
-SSRF_VERSION=`scripts/get-version linux`
-echo "#define VERSION_STRING \"${SSRF_VERSION}\"" > ssrf-version.h
 popd
 
 popd # from crossbuild
