@@ -5,6 +5,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class DcData implements Parcelable {
+        static {
+                System.loadLibrary("libdivecomputer_jni");
+        }
+
         private int fd;
         private String vendor;
         private String product;
@@ -14,6 +18,84 @@ public class DcData implements Parcelable {
         private boolean dump;
         private String logfilepath;
         private String outfilepath;
+
+        private native void resetDcData();
+        private native int setUsbFd(int usbFd);
+        private native int setLogFile(String flname);
+        private native int setDumpFile(String flname);
+        private native int setXmlFile(String flname);
+        private native int initDcContext();
+        private native int initDcDescriptor(String vndr, String prdt);
+        private native int interruptImport();
+        private native int startImport();
+
+        public void nativeResetDcData() {
+                resetDcData();
+        }
+        public void nativeSetUsbFd(int usbFd) throws DcException {
+                int ret = setUsbFd(this.fd);
+                if (ret == -1)
+                        throw new DcException("Invalid USB file descriptor.");
+        }
+
+        public void nativeSetLogFile(String flname) throws DcException {
+                int ret = setLogFile(this.logfilepath);
+                switch (ret) {
+                        case -1 :
+                                throw new DcException("Memory error");
+                        case -2 :
+                                throw new DcException("Null Filename");
+                }
+
+        }
+
+        public void nativeSetDumpFile(String flname) throws DcException {
+                int ret = setDumpFile(this.outfilepath);
+                switch (ret) {
+                        case -1 :
+                                throw new DcException("Memory error");
+                        case -2 :
+                                throw new DcException("Null Filename");
+                }
+
+        }
+
+        public void nativeSetXmlFile(String flname) throws DcException {
+                int ret = setXmlFile(this.outfilepath);
+                switch (ret) {
+                        case -1 :
+                                throw new DcException("Memory error");
+                        case -2 :
+                                throw new DcException("Null Filename");
+                }
+        }
+
+        public void nativeInitDcContext() throws DcException {
+                int ret = initDcContext();
+                if (ret == -1) {
+                        throw new DcException("Error initializing libdivecomputer context.");
+                }
+        }
+
+        public void nativeInitDcDescriptor(String vndr, String prdt) throws DcException {
+                int ret = initDcDescriptor(this.vendor, this.product);
+                if (ret == -1) {
+                        throw new DcException("No device found with given information.");
+                }
+        }
+        public void nativeInterruptImport() throws DcException {
+                int ret = interruptImport();
+                if (ret != 0) {
+                        throw new DcException("Error interrupting import.");
+                }
+        }
+
+        public void nativeStartImport() throws DcException {
+                int ret = startImport();
+                if (ret == -1) {
+                        throw new DcException("Error importing from Divecomputer.");
+                }
+        }
 
         public int getFd() {
                 return fd;
@@ -97,7 +179,7 @@ public class DcData implements Parcelable {
                 this.dump = false;
                 this.log = false;
                 this.logfilepath = null;
-                this.logfilepath = null;
+                this.outfilepath = null;
         }
 
         @Override

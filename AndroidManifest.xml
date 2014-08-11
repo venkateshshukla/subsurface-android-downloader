@@ -33,10 +33,6 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
-            android:name="ImportProgress"
-            android:label="@string/title_import_progress" >
-        </activity>
-        <activity
             android:name="ViewFile"
             android:label="@string/title_view_file" >
         </activity>

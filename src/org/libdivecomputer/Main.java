@@ -35,7 +35,7 @@ import android.widget.Spinner;
 
 public class Main extends Activity implements OnItemSelectedListener, OnClickListener {
         static {
-                System.loadLibrary("subsurface_jni");
+                System.loadLibrary("libdivecomputer_jni");
         }
 
         private native void getDeviceMap(HashMap<String, ArrayList<String>> hm);
@@ -346,9 +346,6 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 }
                 dcData.setFd(fd);
 
-                Intent i = new Intent(this, ImportProgress.class);
-                i.putExtra(DCDATA, dcData);
-                startActivity(i);
                 Log.d(TAG, "openUsbAndImport closed");
         }
 
