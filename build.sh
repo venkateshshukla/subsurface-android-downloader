@@ -44,8 +44,6 @@ fi
 # Prepare for building
 mkdir -vp build
 
-pushd build
-
 # Build libusb
 if [ ! -e libusb/configure ] ; then
 	pushd libusb

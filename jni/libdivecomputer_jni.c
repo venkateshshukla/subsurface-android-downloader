@@ -1,7 +1,7 @@
 /* helper code for interfacing libdivecomputer and susburface commands with
  * android front end using JNI.
  */
-#include "libdivecomputer_jni.c"
+#include "libdivecomputer_jni.h"
 #include "universal.h"
 
 #include <stdio.h>
@@ -22,7 +22,7 @@
 #define STRSIZE 64
 #define PATHSIZE 128
 
-typedef struct device_data_t {
+typedef struct devdata_t {
 	dc_context_t *context;
 	dc_descriptor_t *descriptor;
 	dc_loglevel_t loglevel;
@@ -31,9 +31,9 @@ typedef struct device_data_t {
 	const char *xmlfile;
 	const char *dumpfile;
 	bool dump;
-} device_data_t;
+} devdata_t;
 
-static device_data_t dcdata;
+static devdata_t dcdata;
 
 // Reset the dcdata
 void reset_dcdata(JNIEnv *env, jobject jobj)
@@ -56,7 +56,7 @@ int set_usb_fd(JNIEnv *env, jobject jobj, jint usb_fd)
 int  set_logfile(JNIEnv *env, jobject jobj, jstring jfilename)
 {
 	if (jfilename != NULL) {
-		const char *lf = (*env)->GetUTFChars(env, jfilename, NULL);
+		const char *lf = (*env)->GetStringUTFChars(env, jfilename, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jfilename);
 		char *logfile = (char *) malloc(len + 1);
 		if (logfile == NULL)
@@ -73,7 +73,7 @@ int  set_logfile(JNIEnv *env, jobject jobj, jstring jfilename)
 int  set_dumpfile(JNIEnv *env, jobject jobj, jstring jfilename)
 {
 	if (jfilename != NULL) {
-		const char *df = (*env)->GetUTFChars(env, jfilename, NULL);
+		const char *df = (*env)->GetStringUTFChars(env, jfilename, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jfilename);
 		char *dumpfile = (char *) malloc(len + 1);
 		if (dumpfile == NULL)
@@ -91,7 +91,7 @@ int  set_dumpfile(JNIEnv *env, jobject jobj, jstring jfilename)
 int  set_xmlfile(JNIEnv *env, jobject jobj, jstring jfilename)
 {
 	if (jfilename != NULL) {
-		const char *xf = (*env)->GetUTFChars(env, jfilename, NULL);
+		const char *xf = (*env)->GetStringUTFChars(env, jfilename, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jfilename);
 		char *xmlfile = (char *) malloc(len + 1);
 		if (xmlfile == NULL)
@@ -119,11 +119,11 @@ int init_dc_context(JNIEnv *env, jobject jobj)
 }
 
 // Search for matching dc_descriptor and if found, add it to dcdata.
-int init_dc_descriptor(JNIEnv *env, jobject jobj, jstring jvendor, jstring, jproduct)
+int init_dc_descriptor(JNIEnv *env, jobject jobj, jstring jvendor, jstring jproduct)
 {
 	if (jvendor != NULL && jproduct != NULL) {
-		const char *vn = (*env)->GetUTFChars(env, jvendor, NULL);
-		const char *pr = (*env)->GetUTFChars(env, jproduct, NULL);
+		const char *vn = (*env)->GetStringUTFChars(env, jvendor, NULL);
+		const char *pr = (*env)->GetStringUTFChars(env, jproduct, NULL);
 
 		dc_iterator_t *iterator = NULL;
 		dc_descriptor_t *descriptor = NULL;
@@ -163,7 +163,7 @@ int start_import (JNIEnv *env, jobject jobj)
 	dc_context_set_loglevel (dcdata.context, dcdata.loglevel);
 	dc_context_set_logfunc (dcdata.context, logfunc, NULL);
 
-	rc = dowork (dcdata.context, dcdata.descriptor, dcdata.fd, dcdata.dumpfile, dcdata.xmlfile, dcdata.dump, !dcdata.dump, NULL);
+	int rc = dowork (dcdata.context, dcdata.descriptor, dcdata.fd, dcdata.dumpfile, dcdata.xmlfile, dcdata.dump, !dcdata.dump, NULL);
 	message ("Result: %s\n", errmsg (rc));
 
 	dc_descriptor_free (dcdata.descriptor);
@@ -253,11 +253,11 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	// Register native method for getUsbPermission
 	JNINativeMethod nm2[] = {
-		{ "resetDcData", "()V", reset_dc_data },
+		{ "resetDcData", "()V", reset_dcdata },
 		{ "setUsbFd", "(I)I", set_usb_fd},
-		{ "setLogFile",	"(Ljava/lang/String;)I", set_log_file },
-		{ "setDumpFile", "(Ljava/lang/String;)I", set_dump_file },
-		{ "setXmlFile",	"(Ljava/lang/String;)I", set_xml_file },
+		{ "setLogFile",	"(Ljava/lang/String;)I", set_logfile },
+		{ "setDumpFile", "(Ljava/lang/String;)I", set_dumpfile },
+		{ "setXmlFile",	"(Ljava/lang/String;)I", set_xmlfile },
 		{ "initDcContext", "()I", init_dc_context },
 		{ "initDcDescriptor", "(Ljava/lang/String;Ljava/lang/String;)", init_dc_descriptor },
 		{ "interruptImport", "()I", interrupt_import },

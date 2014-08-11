@@ -43,6 +43,7 @@ typedef struct backend_table_t {
 
 dc_family_t lookup_type (const char *);
 dc_buffer_t *fpconvert (const char *);
+void sighandler (int);
 dc_status_t search (dc_descriptor_t **, const char *, dc_family_t, unsigned int);
 dc_status_t dowork (dc_context_t *, dc_descriptor_t *, int, const char *, const char *, int, int, dc_buffer_t *);
 #endif // UNIVERSAL_H
