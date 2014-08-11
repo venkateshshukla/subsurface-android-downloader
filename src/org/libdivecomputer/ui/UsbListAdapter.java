@@ -20,15 +20,13 @@ public class UsbListAdapter extends BaseAdapter {
         public UsbListAdapter(Context context) {
                 super();
                 this.devicelist = new ArrayList<UsbDevice>();
-                this.inflater = (LayoutInflater) context
-                                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         public UsbListAdapter(Context context, ArrayList<UsbDevice> devicelist) {
                 super();
                 this.devicelist = devicelist;
-                this.inflater = (LayoutInflater) context
-                                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
@@ -50,21 +48,19 @@ public class UsbListAdapter extends BaseAdapter {
         public View getView(int position, View convertView, ViewGroup parent) {
                 ViewHolder holder = null;
                 if (convertView == null) {
-                        convertView = inflater.inflate(R.layout.usblistitem,
-                                        parent, false);
+                        convertView = inflater.inflate(R.layout.usblistitem, parent, false);
                         holder = new ViewHolder();
-                        holder.tvUsbDevName = (TextView) convertView
-                                        .findViewById(R.id.tvUsbDevName);
-                        holder.tvUsbDevPID = (TextView) convertView
-                                        .findViewById(R.id.tvUsbDevPID);
-                        holder.tvUsbDevVID = (TextView) convertView
-                                        .findViewById(R.id.tvUsbDevVID);
+                        holder.tvUsbDevName = (TextView) convertView.findViewById(R.id.tvUsbDevName);
+                        holder.tvUsbDevPID = (TextView) convertView.findViewById(R.id.tvUsbDevPID);
+                        holder.tvUsbDevVID = (TextView) convertView.findViewById(R.id.tvUsbDevVID);
                         convertView.setTag(holder);
                 } else {
                         holder = (ViewHolder) convertView.getTag();
                 }
 
-                String name = devicelist.get(position).getDeviceName();
+                String nm = devicelist.get(position).getDeviceName();
+                String[] ln = nm.split("/");
+                String name = ln[ln.length - 1];
                 int pid = devicelist.get(position).getProductId();
                 int vid = devicelist.get(position).getVendorId();
 
@@ -73,7 +69,6 @@ public class UsbListAdapter extends BaseAdapter {
                 holder.tvUsbDevVID.setText(String.format("%04x", vid));
                 return convertView;
         }
-
         public static class ViewHolder {
                 public TextView tvUsbDevName;
                 public TextView tvUsbDevPID;
