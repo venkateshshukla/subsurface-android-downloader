@@ -62,6 +62,7 @@ int  set_logfile(JNIEnv *env, jobject jobj, jstring jfilename)
 		if (logfile == NULL)
 			return -1; // Memory error
 		strncpy(logfile, lf, len);
+		logfile[len] = 0;
 		(*env)->ReleaseStringUTFChars(env, jfilename, lf);
 		dcdata.logfile = logfile;
 		return 0;
@@ -79,6 +80,7 @@ int  set_dumpfile(JNIEnv *env, jobject jobj, jstring jfilename)
 		if (dumpfile == NULL)
 			return -1; // Memory error
 		strncpy(dumpfile, df, len);
+		dumpfile[len] = 0;
 		(*env)->ReleaseStringUTFChars(env, jfilename, df);
 		dcdata.dumpfile = dumpfile;
 		dcdata.dump = 1;
@@ -97,6 +99,7 @@ int  set_xmlfile(JNIEnv *env, jobject jobj, jstring jfilename)
 		if (xmlfile == NULL)
 			return -1; // Memory error
 		strncpy(xmlfile, xf, len);
+		xmlfile[len] = 0;
 		(*env)->ReleaseStringUTFChars(env, jfilename, xf);
 		dcdata.xmlfile = xmlfile;
 		dcdata.dump = 0;
@@ -164,6 +167,7 @@ int start_import (JNIEnv *env, jobject jobj)
 	dc_context_set_logfunc (dcdata.context, logfunc, NULL);
 
 	int rc = dowork (dcdata.context, dcdata.descriptor, dcdata.fd, dcdata.dumpfile, dcdata.xmlfile, dcdata.dump, !dcdata.dump, NULL);
+	LOGD ("Result: %s\n", errmsg (rc));
 	message ("Result: %s\n", errmsg (rc));
 
 	dc_descriptor_free (dcdata.descriptor);
