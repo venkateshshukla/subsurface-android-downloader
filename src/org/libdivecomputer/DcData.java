@@ -106,7 +106,7 @@ public class DcData implements Parcelable {
         public void nativeStartImport() throws DcException {
                 int ret = startImport();
                 if (ret == -1) {
-                        throw new DcException(R.string.dcdata_error_import);
+                        throw new DcException(R.string.dcdata_import_error);
                 }
         }
 

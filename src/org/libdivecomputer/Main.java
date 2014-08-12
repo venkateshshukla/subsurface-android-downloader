@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -66,6 +67,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         private UsbListAdapter usbListAdapter;
         private PendingIntent usbPendingIntent;
         private BroadcastReceiver usbPermissionReceiver;
+        private DcImportTask dcImportTask;
 
         private static final String TAG = "Main";
         private static final String DCDATA = "DivecomputerData";
@@ -75,6 +77,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_main);
+                requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
                 initialiseVars();
                 initialiseViews();
@@ -152,6 +155,11 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 checked = cbDumpfile.isChecked();
                 etDumpfile.setEnabled(checked);
                 etXmlfile.setEnabled(!checked);
+                if (dcImportTask == null) {
+                        bCancel.setEnabled(false);
+                } else {
+                        bCancel.setEnabled(true);
+                }
         }
 
         private void initialiseVars() {
@@ -184,6 +192,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 usbPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
                 IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
                 registerReceiver(usbPermissionReceiver, filter);
+                dcImportTask = null;
         }
 
         private void addListeners() {
@@ -220,9 +229,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.dialog_error_storage, R.string.dialog_error_folder);
                         return;
                 }
-		if (insertValues()) {
-	                showUsbListDialog();
-		}
+                if (insertValues()) {
+                        showUsbListDialog();
+                }
         }
 
         private boolean noUsbDevice() {
@@ -296,12 +305,16 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         }
                 } catch (DcException e) {
                         showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
-			return false;
+                        return false;
                 }
-		return true;
+                return true;
         }
         public void onCancelClicked(View v) {
-                finish();
+                if (dcImportTask != null) {
+                        dcImportTask.cancel(true);
+                } else {
+                        finish();
+                }
         }
 
         @Override
@@ -363,9 +376,11 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
                 }
 
+                bCancel.setEnabled(true);
+                dcImportTask = new DcImportTask(this, dcData);
+                dcImportTask.execute();
                 Log.d(TAG, "openUsbAndImport closed");
         }
-
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
 
@@ -387,5 +402,10 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 builder.setAdapter(usbListAdapter, this);
                 AlertDialog dialog = builder.create();
                 dialog.show();
+        }
+
+        public void finishImport() {
+                dcImportTask = null;
+                bCancel.setEnabled(false);
         }
 }
