@@ -46,13 +46,13 @@ public class DcData implements Parcelable {
                 resetDcData();
         }
 
-        public void nativeSetUsbFd(int usbFd) throws DcException {
+        public void nativeSetUsbFd() throws DcException {
                 int ret = setUsbFd(this.fd);
                 if (ret == -1)
                         throw new DcException(R.string.dcdata_invalid_usb);
         }
 
-        public void nativeSetLogFile(String flname) throws DcException {
+        public void nativeSetLogFile() throws DcException {
                 int ret = setLogFile(this.logfilepath);
                 switch (ret) {
                         case -1 :
@@ -62,18 +62,13 @@ public class DcData implements Parcelable {
                 }
         }
 
-        public void nativeSetDumpFile(String flname) throws DcException {
-                int ret = setDumpFile(this.outfilepath);
-                switch (ret) {
-                        case -1 :
-                                throw new DcException(R.string.dcdata_error_memory);
-                        case -2 :
-                                throw new DcException(R.string.dcdata_null_file);
+        public void nativeSetOutFile() throws DcException {
+                int ret;
+                if (this.dump) {
+                        ret = setDumpFile(this.outfilepath);
+                } else {
+                        ret = setXmlFile(this.outfilepath);
                 }
-        }
-
-        public void nativeSetXmlFile(String flname) throws DcException {
-                int ret = setXmlFile(this.outfilepath);
                 switch (ret) {
                         case -1 :
                                 throw new DcException(R.string.dcdata_error_memory);
@@ -89,7 +84,7 @@ public class DcData implements Parcelable {
                 }
         }
 
-        public void nativeInitDcDescriptor(String vndr, String prdt) throws DcException {
+        public void nativeInitDcDescriptor() throws DcException {
                 int ret = initDcDescriptor(this.vendor, this.product);
                 if (ret == -1) {
                         throw new DcException(R.string.dcdata_dc_desc);

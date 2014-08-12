@@ -77,7 +77,7 @@ int message (const char* fmt, ...)
 	}
 
 	va_start (ap, fmt);
-	int rc = __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, fmt, ap);
+	int rc = vfprintf(stderr, fmt, ap);
 	va_end (ap);
 
 	return rc;
