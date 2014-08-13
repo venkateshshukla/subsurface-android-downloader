@@ -80,7 +80,7 @@ int set_vendor_name(JNIEnv *env, jobject jobj, jstring jvendor)
 {
 	LOG_F("set_vendor_name");
 	if (jvendor != NULL) {
-		const char *vn = (*env)->GetUTFChars(env, jvendor, NULL);
+		const char *vn = (*env)->GetStringUTFChars(env, jvendor, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jvendor);
 		char *vendor = (char *) malloc(len + 1);
 		if (product == NULL)
@@ -98,7 +98,7 @@ int set_product_name(JNIEnv *env, jobject jobj, jstring jproduct)
 {
 	LOG_F("set_product_name");
 	if (jproduct != NULL) {
-		const char *pr = (*env)->GetUTFChars(env, jproduct, NULL);
+		const char *pr = (*env)->GetStringUTFChars(env, jproduct, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jproduct);
 		char *product = (char *) malloc(len + 1);
 		if (product == NULL)
@@ -116,7 +116,7 @@ int  set_logfile(JNIEnv *env, jobject jobj, jstring jfilename)
 {
 	LOG_F("set_logfile");
 	if (jfilename != NULL) {
-		const char *lf = (*env)->GetUTFChars(env, jfilename, NULL);
+		const char *lf = (*env)->GetStringUTFChars(env, jfilename, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jfilename);
 		char *logfile = (char *) malloc(len + 1);
 		if (logfile == NULL)
@@ -134,7 +134,7 @@ int  set_dumpfile(JNIEnv *env, jobject jobj, jstring jfilename)
 {
 	LOG_F("set_dumpfile");
 	if (jfilename != NULL) {
-		const char *df = (*env)->GetUTFChars(env, jfilename, NULL);
+		const char *df = (*env)->GetStringUTFChars(env, jfilename, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jfilename);
 		char *dumpfile = (char *) malloc(len + 1);
 		if (dumpfile == NULL)
@@ -152,7 +152,7 @@ int  set_xmlfile(JNIEnv *env, jobject jobj, jstring jfilename)
 {
 	LOG_F("set_xmlfile");
 	if (jfilename != NULL) {
-		const char *xf = (*env)->GetUTFChars(env, jfilename, NULL);
+		const char *xf = (*env)->GetStringUTFChars(env, jfilename, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jfilename);
 		char *xmlfile = (char *) malloc(len + 1);
 		if (xmlfile == NULL)
@@ -276,7 +276,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	// Register native method for getUsbPermission
 	JNINativeMethod nm2[] = {
-		{ "resetDcData", "()V", reset_dc_data },
+		{ "resetDcData", "()V", reset_dcdata },
 		{ "setUsbFd", "(I)I", set_usb_fd},
 		{ "setDcPrefer", "(Z)V", set_prefer},
 		{ "setDcForce", "(Z)V", set_force},
@@ -284,9 +284,9 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 		{ "setDcDump", "(Z)V", set_dump},
 		{ "setVendorName", "(Ljava/lang/String;)I", set_vendor_name},
 		{ "setProductName", "(Ljava/lang/String;)I", set_product_name},
-		{ "setLogFile",	"(Ljava/lang/String;)I", set_log_file },
-		{ "setDumpFile", "(Ljava/lang/String;)I", set_dump_file },
-		{ "setXmlFile",	"(Ljava/lang/String;)I", set_xml_file },
+		{ "setLogFile",	"(Ljava/lang/String;)I", set_logfile },
+		{ "setDumpFile", "(Ljava/lang/String;)I", set_dumpfile },
+		{ "setXmlFile",	"(Ljava/lang/String;)I", set_xmlfile },
 		{ "doDcImport", "()V", do_dc_import },
 		{ "doProcessDives", "()V", do_process_dives },
 		{ "doSaveDives", "()I", do_save_dives },
