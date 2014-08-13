@@ -83,9 +83,10 @@ int set_vendor_name(JNIEnv *env, jobject jobj, jstring jvendor)
 		const char *vn = (*env)->GetStringUTFChars(env, jvendor, NULL);
 		jsize len = (*env)->GetStringUTFLength(env, jvendor);
 		char *vendor = (char *) malloc(len + 1);
-		if (product == NULL)
+		if (vendor == NULL)
 			return -1; // Memory error
 		strncpy(vendor, vn, len);
+		vendor[len] = 0;
 		(*env)->ReleaseStringUTFChars(env, jvendor, vn);
 		dcdata.vendor = vendor;
 		return 0;
@@ -104,6 +105,7 @@ int set_product_name(JNIEnv *env, jobject jobj, jstring jproduct)
 		if (product == NULL)
 			return -1; // Memory error
 		strncpy(product, pr, len);
+		product[len] = 0;
 		(*env)->ReleaseStringUTFChars(env, jproduct, pr);
 		dcdata.product = product;
 		return 0;
@@ -122,6 +124,7 @@ int  set_logfile(JNIEnv *env, jobject jobj, jstring jfilename)
 		if (logfile == NULL)
 			return -1; // Memory error
 		strncpy(logfile, lf, len);
+		logfile[len] = 0;
 		(*env)->ReleaseStringUTFChars(env, jfilename, lf);
 		logfile_name = logfile;
 		return 0;
@@ -140,6 +143,7 @@ int  set_dumpfile(JNIEnv *env, jobject jobj, jstring jfilename)
 		if (dumpfile == NULL)
 			return -1; // Memory error
 		strncpy(dumpfile, df, len);
+		dumpfile[len] = 0;
 		(*env)->ReleaseStringUTFChars(env, jfilename, df);
 		dumpfile_name = dumpfile;
 		return 0;
@@ -158,6 +162,7 @@ int  set_xmlfile(JNIEnv *env, jobject jobj, jstring jfilename)
 		if (xmlfile == NULL)
 			return -1; // Memory error
 		strncpy(xmlfile, xf, len);
+		xmlfile[len] = 0;
 		(*env)->ReleaseStringUTFChars(env, jfilename, xf);
 		xmlfile_name = xmlfile;
 		return 0;
