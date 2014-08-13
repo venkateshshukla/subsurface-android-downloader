@@ -54,7 +54,7 @@ public class DcData implements Parcelable {
         public void nativeSetUsbFd(int usbFd) throws DcException {
                 int ret = setUsbFd(this.fd);
                 if (ret == -1)
-                        throw new DcException("Invalid USB file descriptor.");
+                        throw new DcException(R.string.dcdata_invalid_usb);
         }
 
         public void nativeSetDcPrefer(boolean p) {
@@ -77,9 +77,9 @@ public class DcData implements Parcelable {
             int ret = setVendorName(this.vendor);
             switch (ret) {
                     case -1 :
-                            throw new DcException("Memory error");
+                            throw new DcException(R.string.dcdata_error_memory);
                     case -2 :
-                            throw new DcException("Null Filename");
+                            throw new DcException(R.string.dcdata_null_file);
             }
         }
 
@@ -87,9 +87,9 @@ public class DcData implements Parcelable {
             int ret = setProductName(this.product);
             switch (ret) {
                     case -1 :
-                            throw new DcException("Memory error");
+                            throw new DcException(R.string.dcdata_error_memory);
                     case -2 :
-                            throw new DcException("Null Filename");
+                            throw new DcException(R.string.dcdata_null_file);
             }
         }
 
@@ -97,9 +97,9 @@ public class DcData implements Parcelable {
                 int ret = setLogFile(this.logfilepath);
                 switch (ret) {
                         case -1 :
-                                throw new DcException("Memory error");
+                                throw new DcException(R.string.dcdata_error_memory);
                         case -2 :
-                                throw new DcException("Null Filename");
+                                throw new DcException(R.string.dcdata_null_file);
                 }
         }
 
@@ -107,9 +107,9 @@ public class DcData implements Parcelable {
                 int ret = setDumpFile(this.outfilepath);
                 switch (ret) {
                         case -1 :
-                                throw new DcException("Memory error");
+                                throw new DcException(R.string.dcdata_error_memory);
                         case -2 :
-                                throw new DcException("Null Filename");
+                                throw new DcException(R.string.dcdata_null_file);
                 }
         }
 
@@ -117,9 +117,9 @@ public class DcData implements Parcelable {
                 int ret = setXmlFile(this.outfilepath);
                 switch (ret) {
                         case -1 :
-                                throw new DcException("Memory error");
+                                throw new DcException(R.string.dcdata_error_memory);
                         case -2 :
-                                throw new DcException("Null Filename");
+                                throw new DcException(R.string.dcdata_null_file);
                 }
         }
 
@@ -134,7 +134,7 @@ public class DcData implements Parcelable {
         public void nativeDoSaveDives() throws DcException {
                 int ret = doSaveDives();
                 if (ret != 0) {
-                        throw new DcException("Error saving the dives.");
+                        throw new DcException(R.string.dcdata_error_savedives);
                 }
         }
 
@@ -144,7 +144,7 @@ public class DcData implements Parcelable {
 
         public void setFd(int fd) throws DcException {
                 if (fd <= 0) {
-                        throw new DcException("Usb File Descriptor is invalid.");
+                        throw new DcException(R.string.dcdata_invalid_usb);
                 }
                 this.fd = fd;
         }
@@ -156,7 +156,7 @@ public class DcData implements Parcelable {
         public void setVendor(String vendor) throws DcException {
                 // This should never happen
                 if (vendor.equals(null) || vendor.isEmpty()) {
-                        throw new DcException("Empty vendor string is not allowed.");
+                        throw new DcException(R.string.dcdata_empty_vendor);
                 }
                 this.vendor = vendor;
         }
@@ -167,7 +167,7 @@ public class DcData implements Parcelable {
         public void setProduct(String product) throws DcException {
                 // This should never happen
                 if (product.equals(null) || product.isEmpty()) {
-                        throw new DcException("Empty product string is not allowed.");
+                        throw new DcException(R.string.dcdata_empty_product);
                 }
                 this.product = product;
         }
@@ -210,7 +210,7 @@ public class DcData implements Parcelable {
 
         public void setLogfilepath(String logfilepath) throws DcException {
                 if (logfilepath.equals(null) || logfilepath.isEmpty()) {
-                        throw new DcException("Empty logfile string.");
+                        throw new DcException(R.string.dcdata_error_logfile);
                 }
                 this.logfilepath = logfilepath;
         }
@@ -221,31 +221,31 @@ public class DcData implements Parcelable {
 
         public void setOutfilepath(String dumpfilepath) throws DcException {
                 if (dumpfilepath.equals(null) || dumpfilepath.isEmpty()) {
-                        throw new DcException("Empty output file string.");
+                        throw new DcException(R.string.dcdata_empty_outfile);
                 }
                 this.outfilepath = dumpfilepath;
         }
 
         public void validateData() throws DcException {
                 if (log && (logfilepath.equals(null) || logfilepath.isEmpty())) {
-                        throw new DcException("Logging enabled and logfile name not provided.");
+                        throw new DcException(R.string.dcdata_error_logfile);
                 }
                 if (outfilepath.equals(null) || outfilepath.isEmpty()) {
                         if (dump) {
-                                throw new DcException("Dump is enabled and dumpfile name not provided.");
+                                throw new DcException(R.string.dcdata_error_dumpfile);
                         } else {
-                                throw new DcException("Dive download enabled and xmlfile name not provided.");
+                                throw new DcException(R.string.dcdata_error_xmlfile);
                         }
                 }
                 // This should never happen.
                 if (vendor.equals(null) || vendor.isEmpty()) {
-                        throw new DcException("Vendor name is empty.");
+                        throw new DcException(R.string.dcdata_empty_vendor);
                 }
                 if (product.equals(null) || product.isEmpty()) {
-                        throw new DcException("Product name is empty.");
+                        throw new DcException(R.string.dcdata_empty_product);
                 }
                 if (fd <= 0) {
-                        throw new DcException("Usb device is not opened properly.");
+                        throw new DcException(R.string.dcdata_invalid_usb);
                 }
         }
         @Override
