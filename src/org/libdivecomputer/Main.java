@@ -75,8 +75,8 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         @Override
         public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
                 setContentView(R.layout.activity_main);
-                requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
                 initialiseVars();
                 initialiseViews();
@@ -313,9 +313,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         }
 
         public void onCancelClicked(View v) {
-                finish();
 		if (dcImportTask != null) {
                         dcImportTask.cancel(true);
+			dcData.nativeResetDcData();
                 } else {
                         finish();
                 }
@@ -379,6 +379,18 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         dcData.validateData();
                 } catch (DcException e) {
                         showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
+			return;
+                }
+
+		try {
+                        dcData.nativeInitDcContext();
+                        dcData.nativeInitDcDescriptor();
+                        dcData.nativeSetLogFile();
+                        dcData.nativeSetOutFile();;
+                        dcData.nativeSetUsbFd();
+                } catch (DcException e) {
+                        showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
+			return;
                 }
 
                 bCancel.setEnabled(true);
@@ -412,6 +424,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
 
         public void finishImport() {
                 dcImportTask = null;
+                dcData.nativeResetDcData();
                 bCancel.setEnabled(false);
         }
 }
