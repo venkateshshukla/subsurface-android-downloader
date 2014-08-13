@@ -220,8 +220,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.dialog_error_storage, R.string.dialog_error_folder);
                         return;
                 }
-                showUsbListDialog();
-                insertValues();
+                if(insertValues()) {
+			showUsbListDialog();
+		}
         }
 
         private boolean noUsbDevice() {
@@ -266,7 +267,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 // we are using dives folder.
                 return "Dives";
         }
-        private void insertValues() {
+        private boolean insertValues() {
                 boolean frc = cbForce.isChecked();
                 boolean prf = cbPrefer.isChecked();
                 boolean log = cbLogfile.isChecked();
@@ -277,7 +278,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
 
                 if ((log && (lf.equals(null) || lf.isEmpty())) || (dmp && (df.equals(null) || df.isEmpty())) || (!dmp && (xf.equals(null) || xf.isEmpty()))) {
                         showInvalidDialog(R.string.dialog_error_invalid, R.string.dialog_error_empty);
-                        return;
+                        return false;
                 }
 
                 dcData.setPrefer(prf);
@@ -297,7 +298,9 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         }
                 } catch (DcException e) {
                         showInvalidDialog(R.string.error, Integer.valueOf(e.getMessage()));
+			return false;
                 }
+		return true;
         }
 
         public void onCancelClicked(View v) {
