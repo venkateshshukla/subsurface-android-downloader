@@ -42,14 +42,16 @@
     <string name="dcdata_dc_ctx">Error initializing libdivecomputer context.</string>
     <string name="dcdata_dc_desc">No device found with given information.</string>
     <string name="dcdata_error_interrupt">Error interrupting import.</string>
-    <string name="dcdata_error_import">Error importing from divecomputer.</string>
     <string name="dcdata_empty_vendor">Vendor string is empty.</string>
     <string name="dcdata_empty_product">Product string is empty.</string>
     <string name="dcdata_empty_logfile">Log filename string is empty..</string>
     <string name="dcdata_empty_outfile">Xml/dump filename string is empty.</string>
-    <string name="dcdata_error_logfile">Logging enabled and logfile name not provided.</string>
-    <string name="dcdata_error_dumpfile">Dump is enabled and dumpfile name not provided.</string>
-    <string name="dcdata_error_xmlfile">Dive download enabled and xmlfile name not provided.</string>
+    <string name="dcdata_error_logfile">Logging enabled but logfile name not provided.</string>
+    <string name="dcdata_error_dumpfile">Dump is enabled but dumpfile name not provided.</string>
+    <string name="dcdata_error_xmlfile">Dive download enabled but xmlfile name not provided.</string>
     <string name="dcdata_error_savedives">Error saving the dives.</string>
+    <string name="dcdata_import_error">Error importing from divecomputer.</string>
+    <string name="dcdata_import_success">Import successful.</string>
+    <string name="dcdata_import_interrupted">Import interrupted.</string>
 
 </resources>
