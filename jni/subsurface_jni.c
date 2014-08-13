@@ -173,6 +173,7 @@ int  set_xmlfile(JNIEnv *env, jobject jobj, jstring jfilename)
 // Search and initialise dcdata descriptor.
 int init_dc_descriptor(JNIEnv *env, jobject jobj)
 {
+	LOG_F("init_dc_descriptor");
         dc_iterator_t *iterator = NULL;
         dc_descriptor_t *descriptor = NULL;
 
@@ -191,20 +192,25 @@ int init_dc_descriptor(JNIEnv *env, jobject jobj)
 }
 
 // Start importing data from Divecomputer.
-void do_dc_import(JNIEnv *env, jobject jobj)
+jstring do_dc_import(JNIEnv *env, jobject jobj)
 {
 	LOG_F("do_dc_import");
 	const char *error_text;
+	jstring jdcerror;
 	error_text = do_libdivecomputer_import(&dcdata);
-	if (error_text)
+	if (error_text) {
 		LOGD("error while import : %s\n", error_text);
-	LOGD("Finished do_dc_import\n");
+		jdcerror = (*env)->NewStringUTF(env, error_text);
+		return jdcerror;
+	}
+	LOGD("Import successful.\n");
+	return NULL;
 }
 
 // After download if the download is successful, start processing the dives.
 void do_process_dives(JNIEnv *env, jobject jobj)
 {
-        LOG_F("do_process_dives");
+        LOG_F("do_process_dives\n");
         // TODO insert check for cancelled thread.
         process_dives(true, prefer_downloaded);
 }
@@ -313,7 +319,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 		{ "setDumpFile", "(Ljava/lang/String;)I", set_dumpfile },
 		{ "setXmlFile",	"(Ljava/lang/String;)I", set_xmlfile },
 		{ "initDcDescriptor", "()I", init_dc_descriptor},
-		{ "doDcImport", "()V", do_dc_import },
+		{ "doDcImport", "()Ljava/lang/String;", do_dc_import },
 		{ "doProcessDives", "()V", do_process_dives },
 		{ "doSaveDives", "()I", do_save_dives },
 	};

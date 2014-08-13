@@ -56,7 +56,7 @@ public class DcData implements Parcelable {
 
         private native int initDcDescriptor();
 
-        private native void doDcImport();
+        private native String doDcImport();
 
         private native void doProcessDives();
 
@@ -139,8 +139,11 @@ public class DcData implements Parcelable {
                         throw new DcException(R.string.dcdata_dc_desc);
         }
 
-        public void nativeDoDcImport() {
-                doDcImport();
+        public void nativeDoDcImport() throws DcException {
+                String err = doDcImport();
+                if (err != null && !err.isEmpty()) {
+                        throw new DcException(R.string.dcdata_import_error);
+                }
         }
 
         public void nativeDoProcessDives() {

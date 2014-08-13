@@ -37,9 +37,12 @@ public class DcImportTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-                dcData.nativeDoDcImport();
+                try {
+                        dcData.nativeDoDcImport();
+                } catch (DcException e) {
+                        return false;
+                }
                 return true;
-
         }
 
         @Override
@@ -48,8 +51,9 @@ public class DcImportTask extends AsyncTask<Void, Void, Boolean> {
                 activity.finishImport();
                 if (!result) {
                         showErrorDialog(R.string.error, R.string.dcdata_import_error);
+
                 } else {
-                        Toast.makeText(activity, R.string.dcdata_import_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.dcdata_import_success, Toast.LENGTH_SHORT).show();
                 }
                 super.onPostExecute(result);
         }
