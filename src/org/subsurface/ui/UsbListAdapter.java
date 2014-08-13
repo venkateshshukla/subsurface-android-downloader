@@ -1,8 +1,8 @@
-package org.libdivecomputer.ui;
+package org.subsurface.ui;
 
 import java.util.ArrayList;
 
-import org.libdivecomputer.R;
+import org.subsurface.R;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;

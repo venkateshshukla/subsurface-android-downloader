@@ -225,9 +225,9 @@ fi
 ant debug install
 
 # Run the application on the emulator
-adb shell am start -a android.intent.action.MAIN -n org.libdivecomputer/.Main
+adb shell am start -a android.intent.action.MAIN -n org.subsurface/.Main
 
 # Show the logcat
-adb logcat -v threadtime | grep --color=auto -e 'nativehelper' -e \
-	'libdivecomputer' -e 'stderr' -e 'stdout' -e `adb shell ps | grep org.libdivecomputer | cut -c 11-14`
+adb logcat -v threadtime | grep --color=auto -e 'subsurface' -e 'stderr' \
+	-e 'stdout' -e `adb shell ps | grep org.subsurface | cut -c 11-14`
 

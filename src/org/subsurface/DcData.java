@@ -1,14 +1,15 @@
-package org.libdivecomputer;
+package org.subsurface;
 
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class DcData implements Parcelable {
         static {
                 System.loadLibrary("subsurface_jni");
         }
-
+        private static final String TAG = "DcData";
         private int fd;
         private String vendor;
         private String product;
@@ -147,6 +148,7 @@ public class DcData implements Parcelable {
         }
 
         public void nativeDoProcessDives() {
+                Log.d(TAG, "called nativeDoProcessDives.");
                 doProcessDives();
         }
 

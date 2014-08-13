@@ -280,9 +280,9 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	// Find the class calling native function
 	// org/libdivecomputer/Main.java
-	jclass Main = (*env)->FindClass(env, "org/libdivecomputer/Main");
+	jclass Main = (*env)->FindClass(env, "org/subsurface/Main");
 	if (Main == NULL) {
-		LOGD ("FindClass failed : org.libdivecomputer.Main\n");
+		LOGD ("FindClass failed : org.subsurface.Main\n");
 		return -1;
 	}
 
@@ -299,9 +299,9 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 
 	// Find the class org/libdivecomputer/DcData containing all native
 	// functions
-	jclass DcData = (*env)->FindClass(env, "org/libdivecomputer/DcData");
+	jclass DcData = (*env)->FindClass(env, "org/subsurface/DcData");
 	if (DcData == NULL) {
-		LOGD ("FindClass failed : org.libdivecomputer.DcData\n");
+		LOGD ("FindClass failed : org.subsurface.DcData\n");
 		return -1;
 	}
 

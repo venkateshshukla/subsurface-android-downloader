@@ -1,4 +1,4 @@
-package org.libdivecomputer;
+package org.subsurface;
 
 import android.app.AlertDialog;
 import android.os.AsyncTask;
@@ -38,7 +38,12 @@ public class DcImportTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
                 try {
+			// Download dive data from the dive computer.
                         dcData.nativeDoDcImport();
+			// Process the dives to extract valuable information.
+			dcData.nativeDoProcessDives();
+			// Save the dives in form of an XML file.
+			dcData.nativeDoSaveDives();
                 } catch (DcException e) {
                         return false;
                 }

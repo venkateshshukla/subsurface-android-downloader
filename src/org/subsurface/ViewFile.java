@@ -1,4 +1,4 @@
-package org.libdivecomputer;
+package org.subsurface;
 
 import android.app.Activity;
 import android.os.Bundle;

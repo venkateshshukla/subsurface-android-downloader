@@ -1,11 +1,11 @@
-package org.libdivecomputer;
+package org.subsurface;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.libdivecomputer.ui.UsbListAdapter;
+import org.subsurface.ui.UsbListAdapter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
