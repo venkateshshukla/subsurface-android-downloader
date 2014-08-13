@@ -170,6 +170,26 @@ int  set_xmlfile(JNIEnv *env, jobject jobj, jstring jfilename)
 	return -2; // Null filename
 }
 
+// Search and initialise dcdata descriptor.
+int init_dc_descriptor(JNIEnv *env, jobject jobj)
+{
+        dc_iterator_t *iterator = NULL;
+        dc_descriptor_t *descriptor = NULL;
+
+        dc_descriptor_iterator(&iterator);
+        while (dc_iterator_next(iterator, &descriptor) == DC_STATUS_SUCCESS) {
+                const char *vendor = dc_descriptor_get_vendor(descriptor);
+                const char *product = dc_descriptor_get_product(descriptor);
+		if (!strcmp(vendor, dcdata.vendor) && !strcmp(product, dcdata.product)) {
+			dcdata.descriptor = descriptor;
+			return 0;
+		}
+        }
+        dc_iterator_free(iterator);
+	return -1;
+
+}
+
 // Start importing data from Divecomputer.
 void do_dc_import(JNIEnv *env, jobject jobj)
 {
@@ -292,6 +312,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 		{ "setLogFile",	"(Ljava/lang/String;)I", set_logfile },
 		{ "setDumpFile", "(Ljava/lang/String;)I", set_dumpfile },
 		{ "setXmlFile",	"(Ljava/lang/String;)I", set_xmlfile },
+		{ "initDcDescriptor", "()I", init_dc_descriptor},
 		{ "doDcImport", "()V", do_dc_import },
 		{ "doProcessDives", "()V", do_process_dives },
 		{ "doSaveDives", "()I", do_save_dives },

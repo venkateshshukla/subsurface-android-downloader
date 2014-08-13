@@ -33,18 +33,33 @@ public class DcData implements Parcelable {
         }
 
         private native void resetDcData();
+
         private native int setUsbFd(int usbFd);
+
         private native void setDcPrefer(boolean p);
+
         private native void setDcForce(boolean f);
+
         private native void setDcLog(boolean l);
+
         private native void setDcDump(boolean d);
+
         private native int setVendorName(String v);
+
         private native int setProductName(String p);
+
         private native int setLogFile(String flname);
+
         private native int setDumpFile(String flname);
+
         private native int setXmlFile(String flname);
+
+        private native int initDcDescriptor();
+
         private native void doDcImport();
+
         private native void doProcessDives();
+
         private native int doSaveDives();
 
         public void nativeResetDcData() {
@@ -66,40 +81,40 @@ public class DcData implements Parcelable {
         }
 
         public void nativeSetDcLog() {
-                setDcForce(this.log);
+                setDcLog(this.log);
         }
 
         public void nativeSetDcDump() {
                 setDcDump(this.dump);
         }
 
-        public void nativeSetVendorName() throws DcException{
-            int ret = setVendorName(this.vendor);
-            switch (ret) {
-                    case -1 :
-                            throw new DcException(R.string.dcdata_error_memory);
-                    case -2 :
-                            throw new DcException(R.string.dcdata_null_file);
-            }
+        public void nativeSetVendorName() throws DcException {
+                int ret = setVendorName(this.vendor);
+                switch (ret) {
+                case -1:
+                        throw new DcException(R.string.dcdata_error_memory);
+                case -2:
+                        throw new DcException(R.string.dcdata_null_file);
+                }
         }
 
-        public void nativeSetProductName() throws DcException{
-            int ret = setProductName(this.product);
-            switch (ret) {
-                    case -1 :
-                            throw new DcException(R.string.dcdata_error_memory);
-                    case -2 :
-                            throw new DcException(R.string.dcdata_null_file);
-            }
+        public void nativeSetProductName() throws DcException {
+                int ret = setProductName(this.product);
+                switch (ret) {
+                case -1:
+                        throw new DcException(R.string.dcdata_error_memory);
+                case -2:
+                        throw new DcException(R.string.dcdata_null_file);
+                }
         }
 
         public void nativeSetLogFile() throws DcException {
                 int ret = setLogFile(this.logfilepath);
                 switch (ret) {
-                        case -1 :
-                                throw new DcException(R.string.dcdata_error_memory);
-                        case -2 :
-                                throw new DcException(R.string.dcdata_null_file);
+                case -1:
+                        throw new DcException(R.string.dcdata_error_memory);
+                case -2:
+                        throw new DcException(R.string.dcdata_null_file);
                 }
         }
 
@@ -109,7 +124,19 @@ public class DcData implements Parcelable {
                         ret = setDumpFile(this.outfilepath);
                 } else {
                         ret = setXmlFile(this.outfilepath);
-		}
+                }
+                switch (ret) {
+                case -1:
+                        throw new DcException(R.string.dcdata_error_memory);
+                case -2:
+                        throw new DcException(R.string.dcdata_null_file);
+                }
+        }
+
+        public void nativeInitDcDescriptor() throws DcException {
+                int ret = initDcDescriptor();
+                if (ret == -1)
+                        throw new DcException(R.string.dcdata_dc_desc);
         }
 
         public void nativeDoDcImport() {
@@ -149,6 +176,7 @@ public class DcData implements Parcelable {
                 }
                 this.vendor = vendor;
         }
+
         public String getProduct() {
                 return product;
         }
@@ -237,6 +265,7 @@ public class DcData implements Parcelable {
                         throw new DcException(R.string.dcdata_invalid_usb);
                 }
         }
+
         @Override
         public int describeContents() {
                 // TODO Auto-generated method stub

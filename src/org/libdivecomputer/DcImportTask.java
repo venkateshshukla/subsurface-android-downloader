@@ -9,6 +9,7 @@ public class DcImportTask extends AsyncTask<Void, Void, Boolean> {
         // The calling activity. Useful for UI tasks.
         private Main activity;
         private DcData dcData;
+
         public DcImportTask(Main activity, DcData dcData) {
                 this.activity = activity;
                 this.dcData = dcData;
@@ -21,6 +22,7 @@ public class DcImportTask extends AsyncTask<Void, Void, Boolean> {
                 AlertDialog dialog = builder.create();
                 dialog.show();
         }
+
         @Override
         protected void onPreExecute() {
                 // Check once more before execution of import.
@@ -35,14 +37,9 @@ public class DcImportTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-                Boolean success = false;
-                try {
-                        dcData.nativeStartImport();
-                        success = true;
-                } catch (DcException e) {
-                        success = false;
-                }
-                return success;
+                dcData.nativeDoDcImport();
+                return true;
+
         }
 
         @Override
@@ -62,6 +59,7 @@ public class DcImportTask extends AsyncTask<Void, Void, Boolean> {
                 // TODO Auto-generated method stub
                 super.onProgressUpdate(values);
         }
+
         @Override
         protected void onCancelled(Boolean result) {
                 activity.setProgressBarIndeterminateVisibility(false);
@@ -71,4 +69,3 @@ public class DcImportTask extends AsyncTask<Void, Void, Boolean> {
         }
 
 }
-
