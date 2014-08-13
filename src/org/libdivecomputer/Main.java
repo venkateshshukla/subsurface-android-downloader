@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -383,8 +384,6 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 }
 
 		try {
-                        dcData.nativeInitDcContext();
-                        dcData.nativeInitDcDescriptor();
                         dcData.nativeSetLogFile();
                         dcData.nativeSetOutFile();;
                         dcData.nativeSetUsbFd();
