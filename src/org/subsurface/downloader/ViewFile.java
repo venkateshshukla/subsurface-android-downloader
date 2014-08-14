@@ -1,4 +1,4 @@
-package org.subsurface;
+package org.subsurface.downloader;
 
 import android.app.Activity;
 import android.os.Bundle;

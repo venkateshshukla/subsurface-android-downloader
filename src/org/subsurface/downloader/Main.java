@@ -1,11 +1,11 @@
-package org.subsurface;
+package org.subsurface.downloader;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.subsurface.ui.UsbListAdapter;
+import org.subsurface.downloader.ui.UsbListAdapter;
 
 import android.app.Activity;
 import android.app.AlertDialog;

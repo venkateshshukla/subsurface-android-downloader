@@ -1,8 +1,8 @@
-package org.subsurface.ui;
+package org.subsurface.downloader.ui;
 
 import java.util.ArrayList;
 
-import org.subsurface.R;
+import org.subsurface.downloader.R;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;

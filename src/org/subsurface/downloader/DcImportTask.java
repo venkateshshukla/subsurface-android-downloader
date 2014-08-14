@@ -1,4 +1,4 @@
-package org.subsurface;
+package org.subsurface.downloader;
 
 import android.app.AlertDialog;
 import android.os.AsyncTask;
