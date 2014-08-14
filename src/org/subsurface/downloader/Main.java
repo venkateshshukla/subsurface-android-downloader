@@ -16,11 +16,13 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,9 +71,12 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         private BroadcastReceiver usbPermissionReceiver;
         private DcImportTask dcImportTask;
 
+        private SharedPreferences sharedPreferences;
+
         private static final String TAG = "Main";
         private static final String DCDATA = "DivecomputerData";
         private static final String ACTION_USB_PERMISSION = "org.libdivecomputer.USB_PERMISSION";
+        private static final String KEY_SAVE_LOCATION = "pref_save_location";
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +134,8 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         public boolean onOptionsItemSelected(MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.action_settings) {
+                        Intent i = new Intent(this, SettingsActivity.class);
+                        startActivity(i);
                         return true;
                 }
                 return super.onOptionsItemSelected(item);
@@ -193,6 +200,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
                 registerReceiver(usbPermissionReceiver, filter);
                 dcImportTask = null;
+                sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         }
 
         private void addListeners() {
@@ -270,9 +278,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         }
 
         private String getDefaultFolderName() {
-                // This should be done by using sharedpreferences. But for now,
-                // we are using dives folder.
-                return "Dives";
+                return sharedPreferences.getString(KEY_SAVE_LOCATION, getString(R.string.pref_def_save_location));
         }
 
         private boolean insertValues() {
@@ -431,4 +437,5 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                 dcData.nativeResetDcData();
                 bCancel.setEnabled(false);
         }
+
 }

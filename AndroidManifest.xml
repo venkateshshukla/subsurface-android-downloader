@@ -33,6 +33,10 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
+            android:name="SettingsActivity"
+            android:label="@string/title_settings" >
+        </activity>
+        <activity
             android:name="ViewFile"
             android:label="@string/title_view_file" >
         </activity>
