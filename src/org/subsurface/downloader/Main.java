@@ -65,6 +65,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
 
         private UsbManager usbManager;
         private UsbDevice usbDevice;
+	private UsbDeviceConnection usbDeviceConnection;
         private HashMap<String, UsbDevice> usbDeviceMap;
         private UsbListAdapter usbListAdapter;
         private PendingIntent usbPendingIntent;
@@ -364,15 +365,15 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
 
         private void openUsbAndImport() {
                 Log.d(TAG, "openUsbAndImport");
-                UsbDeviceConnection usbCon = usbManager.openDevice(usbDevice);
-                if (usbCon == null) {
+                usbDeviceConnection = usbManager.openDevice(usbDevice);
+                if (usbDeviceConnection == null) {
                         // Failed to open device.
                         showInvalidDialog(R.string.dialog_error_usb, R.string.dialog_error_openusb);
                         Log.d(TAG, "Failed to open the device " + usbDevice.toString());
                         return;
                 }
 
-                int fd = usbCon.getFileDescriptor();
+                int fd = usbDeviceConnection.getFileDescriptor();
                 if (fd <= 0) {
                         // Some error during opening the device. Return.
                         showInvalidDialog(R.string.dialog_error_usb, R.string.dialog_error_openusb);
@@ -435,6 +436,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         public void finishImport() {
                 dcImportTask = null;
                 dcData.nativeResetDcData();
+		usbDeviceConnection.close();
                 bCancel.setEnabled(false);
         }
 
