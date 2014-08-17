@@ -32,15 +32,18 @@ static bool prefer_downloaded;
 void reset_dcdata(JNIEnv *env, jobject jobj)
 {
 	LOG_F("reset_dcdata");
+	free((void *)dcdata.devparam);
 	memset(&dcdata, 0, sizeof (device_data_t));
 }
 
 // Set the usb file descriptor of dcdata
 int set_usb_fd(JNIEnv *env, jobject jobj, jint usb_fd)
 {
+	int *fd = (int *) malloc(sizeof (int));
+	*fd = usb_fd;
 	LOG_F("set_usb_fd");
 	if (usb_fd > 0) {
-		dcdata.fd = usb_fd;
+		dcdata.devparam = fd;
 		return 0;
 	} else {
 		return -1; // Invalid file descriptor

@@ -4,19 +4,24 @@ set -e
 # Configure where we can find things here
 export ANDROID_NDK_ROOT=/android_ndk
 export ANDROID_SDK_ROOT=/android_sdk
+export QT5_ANDROID=/Qt5.3.0/5.3
 
 # Platform architecture
 export ARCH=${1-x86}
 
 if [ "$ARCH" = "arm" ] ;
 then
+	QT_ARCH="armv7"
 	BUILDCHAIN=arm-linux-androideabi
 	export TARGET_ARCH_ABI=armeabi-v7a
 elif [ "$ARCH" = "x86" ] ;
 then
+	QT_ARCH=$ARCH
 	BUILDCHAIN=i686-linux-android
 	export TARGET_ARCH_ABI=x86
 fi
+
+export QT5_ANDROID_BIN=${QT5_ANDROID}/android_${QT_ARCH}/bin
 
 pushd crossbuild
 
@@ -193,25 +198,25 @@ fi
 mkdir -p build/libdivecomputer-build-$ARCH
 pushd build/libdivecomputer-build-$ARCH
 if [ ! -e Makefile ] ; then
-	../../libdivecomputer/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --enable-static --disable-shared --enable-logging LDFLAGS=-llog
+	../../libdivecomputer/configure --host=${BUILDCHAIN} --prefix=${PREFIX} --enable-static --disable-shared --enable-logging
 fi
 make
 make install
 popd
 
-# Make ssrf-version.h file for subsurface
-pushd subsurface
-SSRF_VERSION=`scripts/get-version linux`
-echo "#define VERSION_STRING \"${SSRF_VERSION}\"" > ssrf-version.h
-popd
+mkdir -p build/subsurface-build-$ARCH
+pushd build/subsurface-build-$ARCH
+if [ ! -e Makefile ] ; then
+	$QT5_ANDROID_BIN/qmake ../../subsurface QT_CONFIG=+pkg-config CONFIG+=android_jni
+fi
+make -j4
+make install INSTALL_ROOT=${BUILDROOT}/..
 
 popd # from crossbuild
 
 if [[ $? == 0 ]] ; then
 echo "Finished building requisites."
 fi
-
-export NDK_MODULE_PATH=${BUILDROOT}
 
 # Build native libraries
 $ANDROID_NDK_ROOT/ndk-build -B
