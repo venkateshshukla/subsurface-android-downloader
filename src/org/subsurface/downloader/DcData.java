@@ -110,12 +110,15 @@ public class DcData implements Parcelable {
         }
 
         public void nativeSetLogFile() throws DcException {
-                int ret = setLogFile(this.logfilepath);
-                switch (ret) {
-                case -1:
-                        throw new DcException(R.string.dcdata_error_memory);
-                case -2:
-                        throw new DcException(R.string.dcdata_null_file);
+                Log.d(TAG, "called nativeSetLogFile");
+                if (this.log) {
+                        int ret = setLogFile(this.logfilepath);
+                        switch (ret) {
+                        case -1:
+                                throw new DcException(R.string.dcdata_error_memory);
+                        case -2:
+                                throw new DcException(R.string.dcdata_null_file);
+                        }
                 }
         }
 

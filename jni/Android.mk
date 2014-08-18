@@ -3,7 +3,8 @@ LOCAL_PATH := $(call my-dir)
 LIB_PATH := $(PREFIX)/lib
 INCLUDE_PATH := $(PREFIX)/include
 SUBSURFACE_PATH := $(LOCAL_PATH)/../crossbuild/subsurface
-ANDROID_LIB_DIR := $(LOCAL_PATH)/../libs/$(TARGET_ARCH_ABI)
+ANDROID_LIB_DIR := ../libs/$(TARGET_ARCH_ABI)
+
 include $(CLEAR_VARS)
 LOCAL_MODULE    := libsqlite
 LOCAL_SRC_FILES := $(LIB_PATH)/libsqlite3.a
