@@ -14,5 +14,12 @@
             android:summary="@string/pref_summ_save_location"
             android:title="@string/pref_save_location" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_info" >
+        <Preference android:title="@string/pref_about" >
+            <intent
+                android:targetPackage="org.subsurface.downloader"
+                android:targetClass="org.subsurface.downloader.About" />
+        </Preference>
+    </PreferenceCategory>
 
 </PreferenceScreen>

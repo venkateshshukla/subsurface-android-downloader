@@ -57,11 +57,25 @@
     <string name="dcdata_import_interrupted">Import interrupted.</string>
     <string name="pref_category_divecomputer">Default Divecomputer.</string>
     <string name="pref_category_storage">Storage.</string>
+    <string name="pref_category_info">Info.</string>
     <string name="pref_vendor">Default Vendor.</string>
     <string name="pref_product">Default Divecomputer.</string>
+    <string name="pref_about">About</string>
     <string name="pref_save_location">Default save location.</string>
     <string name="pref_summ_save_location">The given path is appended to the external storage home.</string>
     <string name="pref_def_save_location">Dives</string>
     <string name="toast_parsing_xml">Loading and parsing old dives.</string>
-
+    <string name="title_activity_about">About</string>
+    <string name="about_title">Subsurface Android Downloader</string>
+    <string name="about_developer"><b>Developer</b>\t:\tVenkatesh Shukla</string>
+    <string name="about_mentor"><b>Mentor</b>\t:\tAnton Lundin</string>
+    <string name="about_org"><b>Organisation</b>\t:\tSubsurface</string>
+    <string name="about_visit_project">Visit project Github Repo (https://github.com/venkateshshukla/subsurface-android-downloader)</string>
+    <string name="about_mail_developer">Email Developer : venkatesh.shukla.eee11@iitbhu.ac.in</string>
+    <string name="about_project_desc">This project was undertaken during the
+                course of Google Summer of Code 2014. The application is
+                useful for downloading of dives from divecomputers,
+                processing them and saving it as an xml file. The application
+                uses subsurface and libdivecomputer libraries to achieve this.
+                Presently only FTDI chipset based divecomputers are supported.</string>
 </resources>
