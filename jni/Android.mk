@@ -41,11 +41,6 @@ LOCAL_SRC_FILES := $(LIB_PATH)/libgit2.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE    := libexif
-LOCAL_SRC_FILES := $(LIB_PATH)/libexif.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE    := libusb
 LOCAL_SRC_FILES := $(LIB_PATH)/libusb-1.0.a
 include $(PREBUILT_STATIC_LIBRARY)
@@ -67,7 +62,7 @@ LOCAL_C_INCLUDES := $(INCLUDE_PATH)
 LOCAL_C_INCLUDES += $(INCLUDE_PATH)/libxml2
 LOCAL_C_INCLUDES += $(INCLUDE_PATH)/../lib/libzip/include
 LOCAL_WHOLE_STATIC_LIBRARIES := libsqlite libz libzip libexslt libxslt libxml
-LOCAL_WHOLE_STATIC_LIBRARIES += libgit libexif libusb libftdi libdivecomputer
+LOCAL_WHOLE_STATIC_LIBRARIES += libgit libusb libftdi libdivecomputer
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
