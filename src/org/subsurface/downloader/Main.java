@@ -65,7 +65,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
 
         private UsbManager usbManager;
         private UsbDevice usbDevice;
-	private UsbDeviceConnection usbDeviceConnection;
+        private UsbDeviceConnection usbDeviceConnection;
         private HashMap<String, UsbDevice> usbDeviceMap;
         private UsbListAdapter usbListAdapter;
         private PendingIntent usbPendingIntent;
@@ -239,9 +239,10 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
                         showInvalidDialog(R.string.dialog_error_storage, R.string.dialog_error_folder);
                         return;
                 }
-                if (insertValues()) {
-                        showUsbListDialog();
+                if (!insertValues()) {
+                        return;
                 }
+                showUsbListDialog();
         }
 
         private boolean noUsbDevice() {
@@ -436,7 +437,7 @@ public class Main extends Activity implements OnItemSelectedListener, OnClickLis
         public void finishImport() {
                 dcImportTask = null;
                 dcData.nativeResetDcData();
-		usbDeviceConnection.close();
+                usbDeviceConnection.close();
                 bCancel.setEnabled(false);
         }
 

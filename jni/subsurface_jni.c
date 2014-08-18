@@ -210,6 +210,24 @@ jstring do_dc_import(JNIEnv *env, jobject jobj)
 	return NULL;
 }
 
+// If an xml file of the same name is already present, parse it first.
+int do_parse_dives(JNIEnv *env, jobject jobj, jstring jfilename)
+{
+	LOG_F("do_load_dives\n");
+	if (jfilename != NULL) {
+		const char *fl = (*env)->GetStringUTFChars(env, jfilename, NULL);
+		jsize len = (*env)->GetStringUTFLength(env, jfilename);
+		char *divefile = (char *) malloc(len + 1);
+		if (divefile == NULL)
+			return -1; // Memory error
+		strncpy(divefile, fl, len);
+		divefile[len] = 0;
+		(*env)->ReleaseStringUTFChars(env, jfilename, fl);
+		return parse_file(divefile);
+	}
+	return -1; // filename is NULL
+}
+
 // After download if the download is successful, start processing the dives.
 void do_process_dives(JNIEnv *env, jobject jobj)
 {
@@ -325,6 +343,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved)
 		{ "doDcImport", "()Ljava/lang/String;", do_dc_import },
 		{ "doProcessDives", "()V", do_process_dives },
 		{ "doSaveDives", "()I", do_save_dives },
+		{ "doParseDives", "(Ljava/lang/String;)I", do_parse_dives},
 	};
 
 	if ((*env)->RegisterNatives(env, DcData, nm2 , sizeof (nm2) / sizeof (nm2[0]))) {

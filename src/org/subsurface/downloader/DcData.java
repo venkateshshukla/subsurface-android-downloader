@@ -63,6 +63,8 @@ public class DcData implements Parcelable {
 
         private native int doSaveDives();
 
+        private native int doParseDives(String flpath);
+
         public void nativeResetDcData() {
                 resetDcData();
         }
@@ -159,6 +161,13 @@ public class DcData implements Parcelable {
                 int ret = doSaveDives();
                 if (ret != 0) {
                         throw new DcException(R.string.dcdata_error_savedives);
+                }
+        }
+
+        public void nativeDoParseDives() throws DcException {
+                int ret = doParseDives(this.outfilepath);
+                if (ret != 0) {
+                        throw new DcException(R.string.dcdata_error_parsedives);
                 }
         }
 

@@ -211,6 +211,7 @@ if [ ! -e Makefile ] ; then
 fi
 make -j4
 make install INSTALL_ROOT=${BUILDROOT}/..
+popd
 
 popd # from crossbuild
 

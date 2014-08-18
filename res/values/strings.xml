@@ -51,6 +51,7 @@
     <string name="dcdata_error_dumpfile">Dump is enabled but dumpfile name not provided.</string>
     <string name="dcdata_error_xmlfile">Dive download enabled but xmlfile name not provided.</string>
     <string name="dcdata_error_savedives">Error saving the dives.</string>
+    <string name="dcdata_error_parsedives">Error parsing the dives.</string>
     <string name="dcdata_import_error">Error importing from divecomputer.</string>
     <string name="dcdata_import_success">Import successful.</string>
     <string name="dcdata_import_interrupted">Import interrupted.</string>
@@ -61,5 +62,6 @@
     <string name="pref_save_location">Default save location.</string>
     <string name="pref_summ_save_location">The given path is appended to the external storage home.</string>
     <string name="pref_def_save_location">Dives</string>
+    <string name="toast_parsing_xml">Loading and parsing old dives.</string>
 
 </resources>
