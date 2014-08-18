@@ -209,7 +209,7 @@ $ANDROID_NDK_ROOT/ndk-build -B
 
 # Update application if build.xml is not present
 if [ ! -e build.xml ] ; then
-	android update project -p  .
+	android update project --name subsurface-downloader -s --target android-19 --path .
 fi
 
 # Build the project in debug mode and install on the connected device
